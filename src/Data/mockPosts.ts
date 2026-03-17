@@ -1,17 +1,33 @@
-const mockPosts = [
+ const mockPosts = [
     {
         id: 1,
         user: {
             id:10,
             username: "Zen",
-            avatar: "/Users/cedric/Documents/Kingtsugui Project/Project 6/social-app/DataMock/Man standing.jpg"
+            avatar: "DataMock/man_standing.jpg"
         },
         content: {
             type: "image",
-            url: "/Users/cedric/Documents/Kingtsugui Project/Project 6/social-app/DataMock/The Cornish Coast.jpg"
+            url: "DataMock/cornish_coast.jpg"
         },
         likes: 12, 
-        comments: []
+        comments: ["muy bueno"]
+    },
+
+
+        {
+        id: 2,
+        user: {
+            id:20,
+            username: "Zen",
+            avatar: "DataMock/man_standing.jpg"
+        },
+        content: {
+            type: "image",
+            url: "DataMock/cornish_coast.jpg"
+        },
+        likes: 12, 
+        comments: ["muy bueno"]
     }
 ];
 export default mockPosts;

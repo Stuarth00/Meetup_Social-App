@@ -1,13 +1,15 @@
 import Layout from "../Component/Layout";
 import Post from "../Component/Post/Post";
-// import mockPost from "../Data/mockPosts";
+import mockPost from "../Data/mockPosts";
 
 function HomeFeed() {
   return (
-    <div>
+    <div className="mt-4">
       <Layout>
         <h1>Home Feed</h1>
-        <Post />
+        {mockPost.map((postData) => (
+          <Post key={postData.id} post={postData} />
+        ))}
       </Layout>
     </div>
   );

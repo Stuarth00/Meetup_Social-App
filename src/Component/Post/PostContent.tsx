@@ -1,8 +1,8 @@
-function PostContent() {
+function PostContent({ contentUrl }: { contentUrl: string }) {
   return (
     <div>
-      <img src="#" alt="Content-image" />
-      <p>Description</p>
+      <img src={contentUrl} alt="Content-image" />
+      <p>Image from the beach</p>
     </div>
   );
 }
