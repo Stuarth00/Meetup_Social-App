@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { AppContext } from "../Context/AppProvider";
+import { AppContext } from "../Context/GlobalState";
 
 function Header() {
   const { handleUserProfileClick, handleHomeClick, handleAuthClick } =

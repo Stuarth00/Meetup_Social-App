@@ -1,10 +1,10 @@
 import { Routes, Route } from "react-router-dom";
 import HomeFeed from "./Pages/HomeFeed";
-import AuthorizationPage from "./Pages/Authorization";
+import AuthorizationPage from "./Component/Authorization/Authorization";
 import UserProfile from "./Pages/UserProfile";
 
 import "./App.css";
-import { AppProvider } from "./Context/AppProvider";
+import { AppProvider } from "./Context/GlobalState";
 
 function App() {
   return (

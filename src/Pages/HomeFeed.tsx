@@ -1,6 +1,6 @@
 import Layout from "../Component/Layout";
 import Post from "../Component/Post/Post";
-import mockPost from "../Data/mockPosts";
+import mockPost from "../Types/mockPosts";
 
 function HomeFeed() {
   return (
