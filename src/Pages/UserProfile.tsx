@@ -5,7 +5,7 @@ function UserProfile() {
   return (
     <div>
       <Layout>
-        <ProfilePage />
+        <ProfilePage children={undefined} />
       </Layout>
     </div>
   );

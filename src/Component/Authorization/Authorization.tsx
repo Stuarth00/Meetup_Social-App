@@ -11,7 +11,7 @@ function Authorization() {
         <img
           src="/Image.png"
           alt="app.logo"
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover mt-16"
         />
       </div>
 
@@ -20,9 +20,7 @@ function Authorization() {
           <h1 className="text-4xl font-bold tracking-tight text-gray-600 md:text-5xl">
             Conecta con todos
           </h1>
-          <p className="mt-2 text-gray-600">
-            Únete a nuestra comunidad hoy mismo.
-          </p>
+          <p className="mt-2 text-gray-600">Join our comminity right away!</p>
         </div>
 
         <div className="flex w-full max-w-sm flex-col gap-3">

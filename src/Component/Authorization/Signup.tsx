@@ -23,7 +23,8 @@ const initial_form: SignupFormData = {
 function Signup() {
   const [formData, setFormData] = useState<SignupFormData>(initial_form);
 
-  const { state, dispatch } = useContext(AppContext);
+  const { state, dispatch, asyncSimulate, LoadingSpinner } =
+    useContext(AppContext);
   const navigate = useNavigate();
 
   const hanldeChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -44,21 +45,25 @@ function Signup() {
       alert("Email already exists. Please use a different email.");
       return;
     }
-    dispatch({
-      type: "REGISTER_USER",
-      payload: {
-        ...formData,
-        id: crypto.randomUUID(),
-      },
+    asyncSimulate(() => {
+      dispatch({
+        type: "REGISTER_USER",
+        payload: {
+          ...formData,
+          id: crypto.randomUUID(),
+        },
+      });
+      setFormData(initial_form);
+      navigate("/");
     });
-    setFormData(initial_form);
-    navigate("/");
   };
 
   return (
     <div>
       <h1>Sign up</h1>
       <p>And start connecting!</p>
+
+      <LoadingSpinner />
 
       <form
         className="flex flex-col gap-4 p-[48px] p-4 rounded-md"

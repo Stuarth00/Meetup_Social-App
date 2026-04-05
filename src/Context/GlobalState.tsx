@@ -1,8 +1,10 @@
 // import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import type { ReactNode } from "react";
-import React, { createContext, useEffect, useReducer } from "react";
+import type { JSX, ReactNode } from "react";
+import React, { createContext, useEffect, useReducer, useState } from "react";
 import { type User, type State } from "../Types/Interafaces";
+import { ClipLoader } from "react-spinners";
+// import { set } from "date-fns";
 
 interface AppProviderType {
   handleHomeClick: () => void;
@@ -11,6 +13,10 @@ interface AppProviderType {
   handleAuthClick: () => void;
   state: State;
   dispatch: React.Dispatch<Action>;
+  loading: boolean;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  LoadingSpinner: () => JSX.Element | null | undefined;
+  asyncSimulate: (callback: () => void, delay?: number) => void;
 }
 
 const initialState: State = {
@@ -60,6 +66,22 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem(KEY, JSON.stringify(state));
   }, [state]);
 
+  //Spinner
+  const [loading, setLoading] = useState<boolean>(false);
+
+  function LoadingSpinner(): JSX.Element | null | undefined {
+    if (!loading) return null;
+    return <ClipLoader color="#36d7b7" size={50} />;
+  }
+
+  const asyncSimulate = (callback: () => void, delay = 5000) => {
+    setLoading(true);
+    setTimeout(() => {
+      callback();
+      setLoading(false);
+    }, delay);
+  };
+
   //Routes
   const navigate = useNavigate();
   //   const location = useLocation();
@@ -86,6 +108,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         handleUserProfileClick,
         handleSearchClick,
         handleAuthClick,
+        LoadingSpinner,
+        loading,
+        setLoading,
+        asyncSimulate,
       }}
     >
       {children}

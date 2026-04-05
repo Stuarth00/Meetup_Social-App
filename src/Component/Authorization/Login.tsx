@@ -13,7 +13,8 @@ const initial_form: LoginFormData = {
 
 function Login() {
   const [formData, setFormData] = useState<LoginFormData>(initial_form);
-  const { state, dispatch } = useContext(AppContext);
+  const { state, dispatch, LoadingSpinner, asyncSimulate } =
+    useContext(AppContext);
 
   const hanldeChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -30,11 +31,12 @@ function Login() {
       (user) =>
         user.email === formData.email && user.password === formData.password,
     );
-
     if (validAccess) {
-      dispatch({
-        type: "LOGIN_USER",
-        payload: validAccess,
+      asyncSimulate(() => {
+        dispatch({
+          type: "LOGIN_USER",
+          payload: validAccess,
+        });
       });
     } else {
       alert("Invalid email or password. Please try again.");
@@ -46,12 +48,16 @@ function Login() {
     <div>
       <h1>Log in</h1>
       <p>And meet all the world!</p>
+
+      <LoadingSpinner />
+
       <form
         className="flex flex-col gap-4 p-[48px] p-4 rounded-md"
         onSubmit={hanldeSubmit}
       >
         <label htmlFor="email">Email</label>
         <input
+          id="email"
           type="email"
           name="email"
           value={formData.email}
@@ -62,6 +68,7 @@ function Login() {
 
         <label htmlFor="password">Password</label>
         <input
+          id="password"
           type="password"
           name="password"
           value={formData.password}
