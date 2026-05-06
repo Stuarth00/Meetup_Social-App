@@ -53,7 +53,7 @@ export const editAccount = async (updates : Partial<UserProfile>) => {
   return response.json(); 
 }
 
-//Posts
+//Creating Posts
 export const createPost = async (description : Post) => { 
     const token = localStorage.getItem('token');
     const response = await fetch('http://localhost:3001/api/posts/create-post', {
@@ -66,4 +66,15 @@ export const createPost = async (description : Post) => {
     });
     if(!response.ok) throw new Error('Post creation failed');
     return response.json();
+}
+
+//Getting posts by user logged in
+export const getPost = async () => {
+  const token = localStorage.getItem('token');
+  const response = await fetch('http://localhost:3001/api/posts/me-posts', {
+    method: 'GET', 
+    headers: { 'Authorization': `Bearer ${token}`}, 
+  });
+  if(!response.ok) throw new Error('Getting posts failed');
+  return response.json();
 }

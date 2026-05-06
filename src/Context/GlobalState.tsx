@@ -16,6 +16,7 @@ import {
   getCurrentAccount,
   editAccount,
   createPost,
+  getPost,
 } from "./Requests";
 // import { set } from "date-fns";
 
@@ -37,6 +38,7 @@ interface AppProviderType {
   getCurrentAccount: () => Promise<User>;
   editAccount: (updates: Partial<UserProfile>) => Promise<UserProfile>;
   createPost: (description: Post) => Promise<Post>;
+  getPost: () => Promise<Post>;
 }
 
 const initialState: State = {
@@ -222,6 +224,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         getCurrentAccount,
         editAccount,
         createPost,
+        getPost,
       }}
     >
       {children}

@@ -24,7 +24,7 @@ const initial_form: SignupFormData = {
 function Signup() {
   const [formData, setFormData] = useState<SignupFormData>(initial_form);
 
-  const { state, dispatch, LoadingSpinner, registerUser } =
+  const { state, dispatch, LoadingSpinner, registerUser, getCurrentAccount } =
     useContext(AppContext);
   const navigate = useNavigate();
 
@@ -47,6 +47,7 @@ function Signup() {
       return;
     }
     await registerUser(formData as User);
+    await getCurrentAccount();
     dispatch({ type: "REGISTER_USER", payload: formData as User });
     navigate("/user-profile");
   };
