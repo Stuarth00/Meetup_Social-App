@@ -28,35 +28,12 @@ function Login() {
 
   const hanldeSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      await loginUser(formData.email, formData.password);
-      const user = await getCurrentAccount();
 
-      dispatch({ type: "SET_CURRENT_USER", payload: user });
-      navigate("/user-profile");
-      setFormData(initial_form);
-    } catch (error) {
-      if (error instanceof Error && error.message === "UNAUTHORIZED") {
-        dispatch({ type: "LOGOUT" });
-        navigate("/auth");
-      } else {
-        console.error("Login error:", error);
-      }
-    }
-
-    //     await loginUser(formData.email, formData.password);
-    //     const user = try{
-    //    await getCurrentAccount();
-    // }catch(error){
-    //    if(error instanceof Error && error.message === "UNAUTHORIZED"){
-
-    //       dispatch({ type:"LOGOUT" });
-    //       navigate("/auth");
-    //    }
-    // }
-    //     dispatch({ type: "SET_CURRENT_USER", payload: user });
-    //     navigate("/user-profile");
-    //     setFormData(initial_form);
+    await loginUser(formData.email, formData.password);
+    const user = await getCurrentAccount();
+    dispatch({ type: "SET_CURRENT_USER", payload: user });
+    navigate("/user-profile");
+    setFormData(initial_form);
   };
   return (
     <div>

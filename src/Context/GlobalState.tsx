@@ -21,6 +21,7 @@ import {
   getUserById,
   getPostsByUserId,
   toggleFollowing,
+  type ToggleFollowResponse,
 } from "./Requests";
 
 interface AppProviderType {
@@ -46,13 +47,18 @@ interface AppProviderType {
   getAllUsers: () => Promise<User[]>;
   getUserById: (id: string) => Promise<User>;
   getPostsByUserId: (id: string) => Promise<Post[]>;
-  toggleFollowing: (id: string) => Promise<void>;
+  toggleFollowing: (id: string) => Promise<ToggleFollowResponse>;
 }
 
 const initialState: State = {
   users: [],
   currentUser: null,
   posts: [],
+};
+
+type ToggleFollowPayload = {
+  targetUserId: string;
+  followAction?: "followed" | "unfollowed"; // add this if you need to pass intent
 };
 
 type Action =
@@ -62,7 +68,7 @@ type Action =
   | { type: "LOGOUT" }
   | { type: "CREATE_POST"; payload: Post }
   | { type: "UPDATE_PROFILE"; payload: UserProfile }
-  | { type: "TOGGLE_FOLLOW"; payload: { targetUserId: string } };
+  | { type: "TOGGLE_FOLLOW"; payload: ToggleFollowPayload };
 
 function appReducer(state: State, action: Action): State {
   switch (action.type) {
@@ -105,40 +111,17 @@ function appReducer(state: State, action: Action): State {
       };
     case "TOGGLE_FOLLOW": {
       if (!state.currentUser) return state;
-
       const currentUser = state.currentUser;
-      const targetId = action.payload.targetUserId;
-      const isFollowing = currentUser.following?.includes(targetId);
-      console.log("Reducer called with action:", action);
-      console.log(state.currentUser?.following);
+      const { targetUserId, followAction } = action.payload;
+      const didFollow = followAction === "followed";
+
       return {
         ...state,
-        users: state.users.map((user) => {
-          if (user.user_id === currentUser.user_id) {
-            return {
-              ...user,
-              following: isFollowing
-                ? user.following?.filter((id) => id !== targetId)
-                : [...(user.following || []), targetId],
-            };
-          }
-
-          if (user.user_id === targetId) {
-            return {
-              ...user,
-              followers: isFollowing
-                ? user.followers?.filter((id) => id !== currentUser.user_id)
-                : [...(user.followers || []), currentUser.user_id],
-            };
-          }
-          return user;
-        }),
-
         currentUser: {
           ...currentUser,
-          following: isFollowing
-            ? currentUser.following?.filter((id) => id !== targetId)
-            : [...(currentUser.following || []), targetId],
+          following: didFollow
+            ? [...(currentUser.following || []), targetUserId]
+            : currentUser.following?.filter((id) => id !== targetUserId),
         },
       };
     }

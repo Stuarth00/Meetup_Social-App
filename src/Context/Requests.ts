@@ -1,12 +1,20 @@
 import type { Post, NewUser, Token, UserProfile } from "../Types/Interafaces";
 
+export interface ToggleFollowResponse {
+  action: 'followed' | 'unfollowed';
+  result: { follower_id: string; following_id: string }[];
+}
+
 const handleResponse = async (response: Response) => {
 if(response.status === 401) {
    localStorage.removeItem("token");
    throw new Error("UNAUTHORIZED");
 }
   if(!response.ok) throw new Error('Request failed');
-  return response.json();
+  const data = await response.json();
+    
+    // console.log("Response Values:", data);
+  return data;
 }
 
 
@@ -44,7 +52,7 @@ export const getCurrentAccount = async () => {
         method: 'GET', 
         headers: { 'Authorization': `Bearer ${token}`}, 
     });
-    // if(response.status !== 200) throw new Error('Invalid token');
+
     return handleResponse(response);
 }
 
@@ -129,7 +137,7 @@ export const getPostsByUserId = async (user_id: string) => {
 }
 
 //Following system
-export const toggleFollowing = async (id: string) => { 
+export const toggleFollowing = async (id: string) : Promise<ToggleFollowResponse> => { 
     const token = localStorage.getItem('token');
     const response = await fetch(`http://localhost:3001/api/following/${id}/toggle-follow`, {
         method: 'POST', 

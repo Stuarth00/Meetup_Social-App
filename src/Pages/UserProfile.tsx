@@ -7,7 +7,7 @@ import type { UserProfile } from "../Types/Interafaces";
 import Authorization from "../Component/Authorization/Authorization";
 import { AppContext } from "../Context/GlobalState";
 
-function UserProfile() {
+function ProfileUser() {
   const { user_id } = useParams<{ user_id: string }>();
   const { state, getUserById } = useContext(AppContext);
   const [profileUser, setProfileUser] = useState<UserProfile | null>(null);
@@ -45,4 +45,4 @@ function UserProfile() {
   );
 }
 
-export default UserProfile;
+export default ProfileUser;

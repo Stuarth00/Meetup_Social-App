@@ -38,13 +38,20 @@ function ProfilePage({
   };
 
   const handleFollow = async () => {
-    const targetId = profileUser?.user_id;
-    console.log("targetId:", targetId);
-    if (targetId) {
-      await toggleFollowing(targetId);
+    const target_id = profileUser?.user_id;
+    if (!target_id) return;
+    const followAction: "followed" | "unfollowed" = isFollowing
+      ? "unfollowed"
+      : "followed";
+
+    if (target_id) {
+      await toggleFollowing(target_id);
       dispatch({
         type: "TOGGLE_FOLLOW",
-        payload: { targetUserId: targetId },
+        payload: {
+          targetUserId: target_id,
+          followAction,
+        },
       });
     }
   };
@@ -54,12 +61,14 @@ function ProfilePage({
       {/* {state.currentUser ? ( */}
       <div className="flex flex-col gap-8">
         <div className="flex-shrink-0">
-          <button
-            onClick={handleLogOut}
-            className="rounded-md border border-gray-300 px-4 py-1.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 active:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
-          >
-            Log Out
-          </button>
+          {isOwnProfile ? (
+            <button
+              onClick={handleLogOut}
+              className="rounded-md border border-gray-300 px-4 py-1.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 active:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
+            >
+              Log Out
+            </button>
+          ) : null}
         </div>
         <header className="flex flex-col items-center gap-6 border-b pb-10 sm:flex-row sm:itmes-start sm:gap-12">
           <div className="flex-shrink-0">

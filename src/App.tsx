@@ -1,8 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import HomeFeed from "./Pages/HomeFeed";
 import AuthorizationPage from "./Component/Authorization/Authorization";
-import UserProfile from "./Pages/UserProfile";
-// import OtherUser from "./Component/Users/otherUser";
+import ProfileUser from "./Pages/UserProfile";
 import "./App.css";
 import { AppProvider } from "./Context/GlobalState";
 import Search from "./Pages/Search";
@@ -16,9 +15,9 @@ function App() {
           <Route path="/" element={<HomeFeed />} />
           <Route path="/auth" element={<AuthorizationPage />} />
           <Route path="/search" element={<Search />} />
-          <Route path="/user-profile" element={<UserProfile />} />
+          <Route path="/user-profile" element={<ProfileUser />} />
           <Route path="/edit-profile" element={<EditProfile />} />
-          <Route path="/user/:user_id" element={<UserProfile />} />
+          <Route path="/user/:user_id" element={<ProfileUser />} />
         </Routes>
       </div>
     </AppProvider>
