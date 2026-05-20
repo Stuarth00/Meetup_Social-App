@@ -21,6 +21,8 @@ import {
   getUserById,
   getPostsByUserId,
   toggleFollowing,
+  getFollowersList,
+  getFollowingList,
   type ToggleFollowResponse,
 } from "./Requests";
 
@@ -48,6 +50,14 @@ interface AppProviderType {
   getUserById: (id: string) => Promise<User>;
   getPostsByUserId: (id: string) => Promise<Post[]>;
   toggleFollowing: (id: string) => Promise<ToggleFollowResponse>;
+  getFollowersList: (
+    id: string,
+    type: "followers" | "following",
+  ) => Promise<User[]>;
+  getFollowingList: (
+    id: string,
+    type: "followers" | "following",
+  ) => Promise<User[]>;
 }
 
 const initialState: State = {
@@ -245,6 +255,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         getUserById,
         getPostsByUserId,
         toggleFollowing,
+        getFollowersList,
+        getFollowingList,
       }}
     >
       {children}

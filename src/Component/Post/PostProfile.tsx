@@ -65,7 +65,9 @@ function PostProfile({
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-6">Your posts</h1>
+      <h1 className="text-2xl font-bold mb-6">
+        {isOwnProfile ? "My posts" : "Posts"}
+      </h1>
       <div className="flex gap-4 items-start">
         {columns.map((col, colIndex) => (
           <div key={colIndex} className="flex flex-col gap-4 flex-1">

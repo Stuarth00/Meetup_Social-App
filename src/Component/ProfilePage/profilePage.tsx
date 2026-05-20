@@ -4,6 +4,7 @@ import { AppContext } from "../../Context/GlobalState";
 import Modal from "../Authorization/Modal";
 import CreationPost from "./creationPost";
 import type { UserProfile } from "../../Types/Interafaces";
+import FollowList from "../FollowList/FollowList";
 
 function ProfilePage({
   children,
@@ -23,7 +24,9 @@ function ProfilePage({
     toggleFollowing,
   } = useContext(AppContext);
 
-  const [actionUser, setActionUser] = useState<"post" | "edit" | null>(null);
+  const [actionUser, setActionUser] = useState<
+    "post" | "followerList" | "followingList" | null
+  >(null);
 
   const isFollowing =
     !!profileUser &&
@@ -86,8 +89,28 @@ function ProfilePage({
               <h1 className="text-2xl font-semibold text-gray-300 sm:text-3xl">
                 {profileUser?.first_name} {profileUser?.last_name}'s Profile
               </h1>
-              <span>Followers: {profileUser?.followers?.length || 0}</span>
-              <span>Following: {profileUser?.following?.length || 0}</span>
+              <span
+                id="myClickableSpan"
+                style={{
+                  cursor: "pointer",
+                  // color: "blue",
+                  // textDecoration: "underline",
+                }}
+                onClick={() => setActionUser("followerList")}
+              >
+                Followers: {profileUser?.followers?.length || 0}
+              </span>
+              <span
+                id="myClickableSpan"
+                style={{
+                  cursor: "pointer",
+                  // color: "blue",
+                  // textDecoration: "underline",
+                }}
+                onClick={() => setActionUser("followingList")}
+              >
+                Following: {profileUser?.following?.length || 0}
+              </span>
               <p className="text-gray-400">{profileUser?.email}</p>
               <p className="text-gray-400">{profileUser?.location}</p>
               <p className="text-gray-400">{profileUser?.interests}</p>
@@ -134,12 +157,37 @@ function ProfilePage({
         <main className="w-full">{children}</main>
         {/* Add more profile details here */}
       </div>
-      {/* ) : (
-        <Authorization />
+
+      {/* {actionUser && (
+        <Modal onClose={() => setActionUser(null)}>
+          {actionUser === "post" ? <CreationPost /> : <FollowList />}
+        </Modal>
       )} */}
       {actionUser && (
         <Modal onClose={() => setActionUser(null)}>
-          {actionUser === "post" ? <CreationPost /> : null}
+          {(() => {
+            switch (actionUser) {
+              case "post":
+                return <CreationPost />;
+              case "followerList":
+                // You can pass a prop to reuse the same list component with different data
+                return (
+                  <FollowList
+                    type="followers"
+                    user_id={profileUser?.user_id ?? ""}
+                  />
+                );
+              case "followingList":
+                return (
+                  <FollowList
+                    type="following"
+                    user_id={profileUser?.user_id ?? ""}
+                  />
+                );
+              default:
+                return null;
+            }
+          })()}
         </Modal>
       )}
     </div>

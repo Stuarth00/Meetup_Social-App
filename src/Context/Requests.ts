@@ -146,6 +146,29 @@ export const toggleFollowing = async (id: string) : Promise<ToggleFollowResponse
             'Authorization': `Bearer ${token}`
         }, 
     });
-    // if(!response.ok) throw new Error('Toggling follow failed');
     return handleResponse(response); 
+}
+
+export const getFollowersList = async (user_id: string, type: "followers" | "following") => {
+  const token = localStorage.getItem('token');
+  const response = await fetch(`http://localhost:3001/api/public/${user_id}/follows?type=${type}`, {
+    method: 'GET', 
+    headers: {
+      'Content-Type': 'application/json', 
+      'Authorization': `Bearer ${token}`
+    }, 
+  });
+  return handleResponse(response); 
+}
+
+export const getFollowingList = async (user_id : string, type: "followers" | "following") => {
+  const token = localStorage.getItem('token');
+  const response = await fetch(`http://localhost:3001/api/public/${user_id}/follows?type=${type}`, {
+    method: 'GET', 
+    headers: {
+      'Content-Type': 'application/json', 
+      'Authorization': `Bearer ${token}`
+    }, 
+  });
+  return handleResponse(response);
 }
