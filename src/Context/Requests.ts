@@ -1,3 +1,4 @@
+const API_URL = import.meta.env.VITE_API_URL;
 import type { NewUser, Token, UserProfile } from "../Types/Interafaces";
 
 export interface ToggleFollowResponse {
@@ -19,7 +20,7 @@ if(response.status === 401) {
 
 // Sign up function to register a new user
 export const registerUser = async (formData: NewUser) => {
-  const response = await fetch('http://localhost:3001/api/auth/signup', {
+  const response = await fetch(`${API_URL}/auth/signup`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(formData)
@@ -36,7 +37,7 @@ export const registerUser = async (formData: NewUser) => {
 
 // Login function to authenticate a user
 export const loginUser = async (email: string, password: string) => {
-    const response = await fetch('http://localhost:3001/api/auth/login', {
+    const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST', 
         headers: { 'Content-Type': 'application/json'}, 
         body: JSON.stringify({ email, password })
@@ -51,7 +52,7 @@ export const loginUser = async (email: string, password: string) => {
 // Getting current account 
 export const getCurrentAccount = async () => {
     const token  = localStorage.getItem('token');
-    const response = await fetch('http://localhost:3001/api/users/me', {
+    const response = await fetch(`${API_URL}/users/me`, {
         method: 'GET', 
         headers: { 'Authorization': `Bearer ${token}`}, 
     });
@@ -61,7 +62,7 @@ export const getCurrentAccount = async () => {
 
 export const editAccount = async (updates : Partial<UserProfile>) => {
     const token = localStorage.getItem('token');
-  const response = await fetch('http://localhost:3001/api/users/edit', {
+  const response = await fetch(`${API_URL}/users/edit`, {
     method: 'PUT',
     headers: { 
       'Content-Type': 'application/json',
@@ -80,7 +81,7 @@ export const createPost = async (
 ) => {
   const token = localStorage.getItem("token");
   const response = await fetch(
-    "http://localhost:3001/api/posts/create-post",
+    `${API_URL}/posts/create-post`,
     {
       method: "POST",
       headers: {
@@ -99,7 +100,7 @@ export const createPost = async (
 //Getting posts by user logged in
 export const getPost = async () => {
   const token = localStorage.getItem('token');
-  const response = await fetch('http://localhost:3001/api/posts/me-posts', {
+  const response = await fetch(`${API_URL}/posts/me-posts`, {
     method: 'GET', 
     headers: { 'Authorization': `Bearer ${token}`}, 
   });
@@ -108,7 +109,7 @@ export const getPost = async () => {
 }
 
 export const getAllPosts = async () => { 
-  const response = await fetch('http://localhost:3001/api/posts/all-posts',{ 
+  const response = await fetch(`${API_URL}/posts/all-posts`,{ 
     method: 'GET', 
     headers: { 
       'Content-Type': 'application/json'
@@ -119,7 +120,7 @@ export const getAllPosts = async () => {
 }
 
 export const getAllUsers = async () => {
-  const response = await fetch('http://localhost:3001/api/users/get-all-users', {
+  const response = await fetch(`${API_URL}/users/get-all-users`, {
     method: 'GET', 
     headers: {
       'Content-Type': 'application/json'
@@ -130,7 +131,7 @@ export const getAllUsers = async () => {
 }
 
 export const getUserById = async (id : string) => {
-  const response = await fetch(`http://localhost:3001/api/public/users/${id}`, {
+  const response = await fetch(`${API_URL}/public/users/${id}`, {
     method: 'GET', 
   });
   // if(!response.ok) throw new Error('Getting user by id failed');
@@ -139,7 +140,7 @@ export const getUserById = async (id : string) => {
 
 export const getPostsByUserId = async (user_id: string) => {
   const response = await fetch(
-    `http://localhost:3001/api/public/posts/${user_id}`
+    `${API_URL}/public/posts/${user_id}`
   );
   if (!response.ok) {
     throw new Error("Failed to fetch user posts");
@@ -150,7 +151,7 @@ export const getPostsByUserId = async (user_id: string) => {
 //Following system
 export const toggleFollowing = async (id: string) : Promise<ToggleFollowResponse> => { 
     const token = localStorage.getItem('token');
-    const response = await fetch(`http://localhost:3001/api/following/${id}/toggle-follow`, {
+    const response = await fetch(`${API_URL}/following/${id}/toggle-follow`, {
         method: 'POST', 
         headers: {
             'Content-Type': 'application/json', 
@@ -162,7 +163,7 @@ export const toggleFollowing = async (id: string) : Promise<ToggleFollowResponse
 
 export const getFollowersList = async (user_id: string, type: "followers" | "following") => {
   const token = localStorage.getItem('token');
-  const response = await fetch(`http://localhost:3001/api/public/${user_id}/follows?type=${type}`, {
+  const response = await fetch(`${API_URL}/public/${user_id}/follows?type=${type}`, {
     method: 'GET', 
     headers: {
       'Content-Type': 'application/json', 
@@ -174,7 +175,7 @@ export const getFollowersList = async (user_id: string, type: "followers" | "fol
 
 export const getFollowingList = async (user_id : string, type: "followers" | "following") => {
   const token = localStorage.getItem('token');
-  const response = await fetch(`http://localhost:3001/api/public/${user_id}/follows?type=${type}`, {
+  const response = await fetch(`${API_URL}/public/${user_id}/follows?type=${type}`, {
     method: 'GET', 
     headers: {
       'Content-Type': 'application/json', 
@@ -186,7 +187,7 @@ export const getFollowingList = async (user_id : string, type: "followers" | "fo
 
 export const toggleLike = async (post_id: string) => {
   const token = localStorage.getItem('token');
-  const response = await fetch(`http://localhost:3001/api/like/${post_id}/toggle-like`, {
+  const response = await fetch(`${API_URL}/like/${post_id}/toggle-like`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -198,7 +199,7 @@ export const toggleLike = async (post_id: string) => {
 
 export const getLikesByPostId = async (post_id: string) => {
   const token = localStorage.getItem('token');
-  const response = await fetch(`http://localhost:3001/api/like/${post_id}/likes`, {
+  const response = await fetch(`${API_URL}/like/${post_id}/likes`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -210,7 +211,7 @@ export const getLikesByPostId = async (post_id: string) => {
 
 export const addComment = async (post_id: string, comment: string) => {
   const token = localStorage.getItem('token');
-  const response = await fetch(`http://localhost:3001/api/comments/${post_id}/comments`, {
+  const response = await fetch(`${API_URL}/comments/${post_id}/comments`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

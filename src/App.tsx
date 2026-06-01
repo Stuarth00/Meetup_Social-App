@@ -8,6 +8,7 @@ import Search from "./Pages/Search";
 import EditProfile from "./Component/ProfilePage/EditProfile";
 
 function App() {
+  console.log("Current port:", window.location.port);
   return (
     <AppProvider>
       <div>
