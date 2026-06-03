@@ -26,6 +26,7 @@ import {
   toggleLike,
   getLikesByPostId,
   addComment,
+  getPostById,
   type ToggleFollowResponse,
 } from "./Requests";
 
@@ -84,6 +85,7 @@ interface AppProviderType {
       text: string;
     };
   }>;
+  getPostById: (post_id: string) => Promise<Post>;
 }
 
 const initialState: State = {
@@ -94,7 +96,7 @@ const initialState: State = {
 
 type ToggleFollowPayload = {
   targetUserId: string;
-  followAction?: "followed" | "unfollowed"; // add this if you need to pass intent
+  followAction?: "followed" | "unfollowed";
 };
 
 type Action =
@@ -114,7 +116,6 @@ function appReducer(state: State, action: Action): State {
         currentUser: action.payload,
       };
     case "LOGOUT":
-      console.log("Reducer called with action:", action);
       return { ...state, currentUser: null };
     case "CREATE_POST":
       if (!state.currentUser) return state;
@@ -253,6 +254,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         toggleLike,
         getLikesByPostId,
         addComment,
+        getPostById,
       }}
     >
       {children}

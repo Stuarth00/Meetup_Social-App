@@ -45,7 +45,6 @@ export const loginUser = async (email: string, password: string) => {
     if (response.status !== 200) throw new Error('Login failed');
     const token : Token  = await response.json();
     localStorage.setItem('token', token.token);
-    console.log(token.token)
     return token; 
 }
 
@@ -104,18 +103,16 @@ export const getPost = async () => {
     method: 'GET', 
     headers: { 'Authorization': `Bearer ${token}`}, 
   });
-  // if(!response.ok) throw new Error('Getting posts failed');
   return handleResponse(response);
 }
 
 export const getAllPosts = async () => { 
-  const response = await fetch(`${API_URL}/posts/all-posts`,{ 
+  const response = await fetch(`${API_URL}/public/all-posts`,{ 
     method: 'GET', 
     headers: { 
       'Content-Type': 'application/json'
     }, 
   });
-  // if(!response.ok) throw new Error('Getting posts failed');
   return handleResponse(response);
 }
 
@@ -134,13 +131,18 @@ export const getUserById = async (id : string) => {
   const response = await fetch(`${API_URL}/public/users/${id}`, {
     method: 'GET', 
   });
-  // if(!response.ok) throw new Error('Getting user by id failed');
   return handleResponse(response); 
 }
 
 export const getPostsByUserId = async (user_id: string) => {
   const response = await fetch(
-    `${API_URL}/public/posts/${user_id}`
+    `${API_URL}/public/users/${user_id}/posts`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
   );
   if (!response.ok) {
     throw new Error("Failed to fetch user posts");
@@ -218,6 +220,17 @@ export const addComment = async (post_id: string, comment: string) => {
       'Authorization': `Bearer ${token}`
     },
     body: JSON.stringify({ comment })
+  });
+  return handleResponse(response);
+}
+
+//Get one post by post id
+export const getPostById = async (post_id: string) => {
+  const response = await fetch(`${API_URL}/public/posts/${post_id}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
   });
   return handleResponse(response);
 }

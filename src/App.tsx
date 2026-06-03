@@ -6,9 +6,9 @@ import "./App.css";
 import { AppProvider } from "./Context/GlobalState";
 import Search from "./Pages/Search";
 import EditProfile from "./Component/ProfilePage/EditProfile";
+import SinglePost from "./Pages/SinglePost";
 
 function App() {
-  console.log("Current port:", window.location.port);
   return (
     <AppProvider>
       <div>
@@ -19,6 +19,7 @@ function App() {
           <Route path="/user-profile" element={<ProfileUser />} />
           <Route path="/edit-profile" element={<EditProfile />} />
           <Route path="/user/:user_id" element={<ProfileUser />} />
+          <Route path="/posts/:post_id" element={<SinglePost />} />
         </Routes>
       </div>
     </AppProvider>

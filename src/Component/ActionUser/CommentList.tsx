@@ -45,6 +45,14 @@ function CommentList({
     }
   };
 
+  const formattedDate = new Date(post.created_at || "").toLocaleDateString(
+    undefined,
+    {
+      month: "short",
+      day: "numeric",
+    },
+  );
+
   return (
     <div>
       <div className="w-full max-w-6xl h-[85vh] max-h-[750px] bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
@@ -155,7 +163,7 @@ function CommentList({
                 : "No comments yet"}
             </p>
             <p className="text-[10px] text-gray-400 uppercase tracking-wide font-medium">
-              May 29, 2026
+              {formattedDate}
             </p>
           </div>
 

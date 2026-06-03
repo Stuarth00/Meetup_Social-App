@@ -15,14 +15,10 @@ interface LikeUser {
 }
 
 function PostAction({
-  // content_url,
-  description,
   likes,
   post_id,
   post,
 }: {
-  content_url: string;
-  description: string | undefined;
   likes: { user_id: string }[] | undefined;
   post_id: string;
   post: {
@@ -82,6 +78,33 @@ function PostAction({
       setLikesList(data);
     } catch (err) {
       console.error("Failed to fetch likes list", err);
+    }
+  };
+
+  const handleSharePost = async () => {
+    const shareUrl = `${window.location.origin}/posts/${post_id}`;
+    const shareData = {
+      title: "Check out this post!",
+      text: "I found this post interesting and wanted to share it with you.",
+      url: shareUrl,
+    };
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+        console.log("Post shared successfully");
+      } catch (err) {
+        console.error("Error sharing post:", err);
+        return err;
+      }
+    } else {
+      navigator.clipboard
+        .writeText(shareUrl)
+        .then(() => {
+          alert("Post URL copied to clipboard!");
+        })
+        .catch((err) => {
+          console.error("Failed to copy URL:", err);
+        });
     }
   };
 
@@ -148,6 +171,10 @@ function PostAction({
             onClick={() => setActionClicked("share")}
           >
             <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSharePost();
+              }}
               className="p-1.5 rounded-full hover:bg-green-50 transition-colors duration-200"
               aria-label="Share post"
             >
@@ -160,7 +187,9 @@ function PostAction({
         </div>
 
         <div className="mb-3">
-          <p className="text-gray-800 text-sm leading-relaxed">{description}</p>
+          <p className="text-gray-800 text-sm leading-relaxed">
+            {post.description}
+          </p>
         </div>
 
         <div className="mt-3 pt-2 border-t border-gray-100">
