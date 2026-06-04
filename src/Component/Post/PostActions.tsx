@@ -35,7 +35,10 @@ function PostAction({
   };
 }) {
   const [likesCount, setLikesCount] = useState(likes?.length || 0);
-  const { toggleLike, state, getLikesByPostId } = useContext(AppContext);
+
+  const { toggleLike, state, getLikesByPostId, dispatch } =
+    useContext(AppContext);
+
   const currentUserId = state.currentUser?.user_id;
   const [isLiked, setIsLiked] = useState(
     likes?.some((like) => like.user_id === currentUserId) || false,
@@ -46,6 +49,9 @@ function PostAction({
 
   const [likesList, setLikesList] = useState<LikeUser[]>([]);
 
+  const currentPost = state.posts.find((p) => p.post_id === post_id);
+  const comments = currentPost?.comments || [];
+
   useEffect(() => {
     if (!currentUserId) return;
 
@@ -53,6 +59,7 @@ function PostAction({
     setIsLiked(likes?.some((like) => like.user_id === currentUserId) || false);
   }, [likes, currentUserId]);
 
+  //Hanlde like button click with optimistic UI update
   const handleClick = async () => {
     const previousIsLiked = isLiked;
     const previousLikeCount = likesCount;
@@ -115,7 +122,15 @@ function PostAction({
 
       case "comment":
         return (
-          <CommentList post={post} isLiked={isLiked} likesCount={likesCount} />
+          <CommentList
+            post={post}
+            isLiked={isLiked}
+            likesCount={likesCount}
+            handleClick={handleClick}
+            handleSharePost={handleSharePost}
+            dispatch={dispatch}
+            comments={comments}
+          />
         );
 
       case "share":
@@ -162,7 +177,7 @@ function PostAction({
               <MessageCircle className="w-5 h-5 text-gray-600 transition-transform group-hover:scale-110" />
             </button>
             <span className="text-xs font-semibold text-gray-600 group-hover:text-gray-900">
-              {post.comments ? post.comments.length : 0}
+              {comments ? comments.length : 0}
             </span>
           </div>
 
@@ -180,9 +195,9 @@ function PostAction({
             >
               <Forward className="w-5 h-5 text-gray-600 transition-transform group-hover:scale-110" />
             </button>
-            <span className="text-xs font-semibold text-gray-600 group-hover:text-gray-900">
+            {/* <span className="text-xs font-semibold text-gray-600 group-hover:text-gray-900">
               5
-            </span>
+            </span> */}
           </div>
         </div>
 
@@ -197,16 +212,16 @@ function PostAction({
             onClick={() => setActionClicked("comment")}
             className="text-xs font-medium text-gray-400 hover:underline mb-1 block"
           >
-            {post.comments && post.comments.length > 0
-              ? `View all ${post.comments.length} comments`
+            {comments && comments.length > 0
+              ? `View all ${comments.length} comments`
               : "No comments yet. Be the first to comment!"}
           </button>
-          {post.comments && post.comments[0] && (
+          {comments && comments[0] && (
             <p className="text-xs text-gray-700">
               <strong className="font-black mr-1">
-                {post.comments[0].username}
+                {comments[0].username}
               </strong>
-              {post.comments[0].text}
+              {comments[0].text}
             </p>
           )}
         </div>

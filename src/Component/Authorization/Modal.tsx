@@ -67,7 +67,7 @@ function ModalForm({ children, onClose }: ModalProps) {
     <dialog
       ref={dialogRef}
       onClick={handleClose}
-      className="border border-gray-400 rounded w-full max-w-2xl m-0"
+      className="border border-gray-400 rounded w-[95vw] max-w-6xl m-0 p-0"
     >
       {children}
     </dialog>

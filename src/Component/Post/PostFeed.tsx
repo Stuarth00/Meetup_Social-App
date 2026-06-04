@@ -1,7 +1,5 @@
 import PostHeader from "./PostHeader";
 import PostContent from "./PostContent";
-// import { useContext } from "react";
-// import { AppContext } from "../../Context/GlobalState";
 import type { Like, Media, PostComment } from "../../Types/Interafaces";
 import PostActions from "./PostActions";
 
@@ -22,7 +20,6 @@ interface PostProps {
 }
 
 function PostFeed({ post, handleNavigateToUserId }: PostProps) {
-  // const { state } = useContext(AppContext);
   const first_media_url =
     post.media && post.media.length > 0 ? post.media[0].content_url : null;
   const post_id = post.post_id || "Unknown";

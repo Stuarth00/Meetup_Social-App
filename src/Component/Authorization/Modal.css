@@ -20,7 +20,7 @@ dialog {
     border-radius: 12px;
     background-color: var(--bg-color, #393b47);
     color: var(--text-color, #9ea7a9);
-    max-width: 500px;
+    min-width: 300px;
     width: 90%;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }

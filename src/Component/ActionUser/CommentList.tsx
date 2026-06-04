@@ -1,13 +1,19 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Heart, MessageCircle, Forward, Smile } from "lucide-react";
 import "../../index.css";
 import type { Media, Like, PostComment } from "../../Types/Interafaces";
-import { AppContext } from "../../Context/GlobalState";
-import { useContext } from "react";
+import { AppContext, type Action } from "../../Context/GlobalState";
+import { useContext, useState } from "react";
+import EmojiPicker from "../Elements/EmojiPicker";
 
 function CommentList({
   likesCount,
   isLiked,
   post,
+  handleClick,
+  handleSharePost,
+  dispatch,
+  comments,
 }: {
   likesCount: number;
   isLiked: boolean;
@@ -23,8 +29,15 @@ function CommentList({
     comments?: PostComment[];
     created_at?: string;
   };
+  handleClick: () => void;
+  handleSharePost: () => void;
+  dispatch: React.Dispatch<Action>;
+  comments: PostComment[];
 }) {
-  const { addComment } = useContext(AppContext);
+  const { addComment, handleNavigateToUserId } = useContext(AppContext);
+
+  //Setting emojipicker
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -35,10 +48,15 @@ function CommentList({
     if (!text.trim() || !post.post_id) return;
 
     try {
-      console.log("Adding comment:", { post_id: post.post_id, text });
-      console.log(formData.get("comment"));
-      console.log(text);
-      await addComment(post.post_id, text);
+      const newComment: PostComment = await addComment(post.post_id, text);
+      console.log("New comment added:", newComment);
+      dispatch({
+        type: "ADD_COMMENT",
+        payload: {
+          post_id: post.post_id!,
+          comment: newComment,
+        },
+      });
       form.reset();
     } catch (error) {
       console.error("Failed to add comment:", error);
@@ -56,7 +74,7 @@ function CommentList({
   return (
     <div>
       <div className="w-full max-w-6xl h-[85vh] max-h-[750px] bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
-        <div className="w-full md:w-[55%] h-1/2 md:h-full bg-black flex items-center justify-center relative select-none border-b md:border-b-0 md:border-r border-gray-100">
+        <div className="w-full md:w-[50%] h-1/2 md:h-full bg-black flex items-center justify-center relative select-none border-b md:border-b-0 md:border-r border-gray-100">
           <img
             src={
               post.media && post.media.length > 0
@@ -68,7 +86,7 @@ function CommentList({
           />
         </div>
 
-        <div className="w-full md:w-[45%] h-1/2 md:h-full flex flex-col bg-white min-w-0">
+        <div className="w-full md:w-[50%] h-1/2 md:h-full flex flex-col bg-white min-w-0">
           {/* Header */}
           <div className="p-4 border-b border-gray-100 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-3">
@@ -105,7 +123,7 @@ function CommentList({
 
             <div className="space-y-4">
               <div className="gap-3 group min-w-0">
-                {post.comments?.map((comment) => (
+                {comments.map((comment) => (
                   <div
                     key={comment.comment_id}
                     className="flex items-start gap-3 min-w-0"
@@ -117,7 +135,12 @@ function CommentList({
                     />
                     <div className="min-w-0 flex-1">
                       <p className="text-sm text-gray-800 break-words leading-relaxed">
-                        <strong className="font-semibold mr-1.5">
+                        <strong
+                          onClick={() =>
+                            handleNavigateToUserId(comment.user_id || "")
+                          }
+                          className="font-semibold mr-1.5 cursor-pointer hover:underline"
+                        >
                           {comment.username}
                         </strong>
                         {comment.text}
@@ -142,6 +165,10 @@ function CommentList({
             <div className="flex items-center gap-5 mb-2">
               <button className="hover:scale-110 transition-transform">
                 <Heart
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleClick();
+                  }}
                   className={
                     isLiked ? "fill-red-500 text-red-500" : "text-gray-700"
                   }
@@ -150,7 +177,13 @@ function CommentList({
               <button className="hover:scale-110 transition-transform">
                 <MessageCircle className="text-gray-700" />
               </button>
-              <button className="hover:scale-110 transition-transform">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSharePost();
+                }}
+                className="hover:scale-110 transition-transform"
+              >
                 <Forward className="text-gray-700" />
               </button>
             </div>
@@ -159,7 +192,7 @@ function CommentList({
             </p>
             <p className="text-sm font-semibold text-gray-900 mb-1">
               {post.comments && post.comments.length > 0
-                ? `${post.comments.length} comments`
+                ? `${comments.length} comments`
                 : "No comments yet"}
             </p>
             <p className="text-[10px] text-gray-400 uppercase tracking-wide font-medium">
@@ -167,11 +200,13 @@ function CommentList({
             </p>
           </div>
 
+          {/* Form to comment */}
           <div className="border-t border-gray-100 px-4 py-3 bg-white shrink-0">
             <form onSubmit={handleSubmit} className="flex items-start gap-3">
               {"  "}
               <button
                 type="button"
+                onClick={() => setIsOpen(!isOpen)}
                 className="text-gray-500 hover:text-gray-700 transition-colors hidden sm:block mt-1"
               >
                 <Smile className="w-6 h-6" />
@@ -190,6 +225,7 @@ function CommentList({
                 Post
               </button>
             </form>
+            {isOpen && <EmojiPicker isOpen={isOpen} setIsOpen={setIsOpen} />}
           </div>
         </div>
       </div>

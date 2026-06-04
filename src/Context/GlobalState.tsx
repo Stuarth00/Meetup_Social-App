@@ -7,6 +7,7 @@ import {
   type Token,
   type Post,
   type UserProfile,
+  type PostComment,
 } from "../Types/Interafaces";
 import { ClipLoader } from "react-spinners";
 import {
@@ -76,15 +77,7 @@ interface AppProviderType {
       avatar?: string;
     }[]
   >;
-  addComment: (
-    post_id: string,
-    text: string,
-  ) => Promise<{
-    comment: {
-      post_id: string;
-      text: string;
-    };
-  }>;
+  addComment: (post_id: string, text: string) => Promise<PostComment>;
   getPostById: (post_id: string) => Promise<Post>;
 }
 
@@ -99,14 +92,22 @@ type ToggleFollowPayload = {
   followAction?: "followed" | "unfollowed";
 };
 
-type Action =
+export type Action =
   | { type: "SET_CURRENT_USER"; payload: User }
   | { type: "REGISTER_USER"; payload: User }
   | { type: "LOGIN_USER"; payload: User }
   | { type: "LOGOUT" }
   | { type: "CREATE_POST"; payload: Post }
+  | { type: "SET_POSTS"; payload: Post[] }
   | { type: "UPDATE_PROFILE"; payload: UserProfile }
-  | { type: "TOGGLE_FOLLOW"; payload: ToggleFollowPayload };
+  | { type: "TOGGLE_FOLLOW"; payload: ToggleFollowPayload }
+  | {
+      type: "ADD_COMMENT";
+      payload: {
+        post_id: string;
+        comment: PostComment;
+      };
+    };
 
 function appReducer(state: State, action: Action): State {
   switch (action.type) {
@@ -125,6 +126,11 @@ function appReducer(state: State, action: Action): State {
         posts: Array.isArray(state.posts)
           ? [...state.posts, action.payload]
           : [action.payload],
+      };
+    case "SET_POSTS":
+      return {
+        ...state,
+        posts: action.payload,
       };
     case "UPDATE_PROFILE":
       if (!state.currentUser) return state;
@@ -151,6 +157,20 @@ function appReducer(state: State, action: Action): State {
         },
       };
     }
+    case "ADD_COMMENT":
+      if (!state.currentUser) return state;
+
+      return {
+        ...state,
+        posts: state.posts.map((post) =>
+          post.post_id === action.payload.post_id
+            ? {
+                ...post,
+                comments: [...(post.comments || []), action.payload.comment],
+              }
+            : post,
+        ),
+      };
     default:
       return state;
   }

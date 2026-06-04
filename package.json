@@ -12,6 +12,7 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.2.1",
     "date-fns": "^4.1.0",
+    "emoji-picker-react": "^4.19.1",
     "google-places-autocomplete-react": "^1.0.18",
     "heic2any": "^0.0.4",
     "jwt-decode": "^4.0.0",
