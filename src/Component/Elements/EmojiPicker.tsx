@@ -1,34 +1,29 @@
 import EmojiPicker, { type EmojiClickData, Theme } from "emoji-picker-react";
-import { useState } from "react";
 
 function EmojiBox({
   isOpen,
   setIsOpen,
+  setText,
 }: {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setText: React.Dispatch<React.SetStateAction<string>>;
 }) {
-  const [text, setText] = useState<string>("");
-
   const handleEmojiClick = (emojiData: EmojiClickData) => {
     setText((prev) => prev + emojiData.emoji);
   };
 
   return (
     <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
-      <h2>React TS Emoji Box</h2>
-
       <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
         <input
           type="text"
-          value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="Type a message..."
-          style={{ padding: "10px", width: "300px", fontSize: "16px" }}
+          className="hidden"
         />
         <button
           onClick={() => setIsOpen(!isOpen)}
-          style={{ padding: "10px 15px", cursor: "pointer", fontSize: "16px" }}
+          style={{ padding: "5px 5px", cursor: "pointer", fontSize: "16px" }}
         >
           {isOpen ? "❌ Close" : "😀 Emojis"}
         </button>

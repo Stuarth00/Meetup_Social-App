@@ -36,6 +36,7 @@ function CommentList({
 }) {
   const { addComment, handleNavigateToUserId } = useContext(AppContext);
 
+  const [text, setText] = useState<string>("");
   //Setting emojipicker
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -212,8 +213,10 @@ function CommentList({
                 <Smile className="w-6 h-6" />
               </button>
               <textarea
-                name="comment"
-                id="comment"
+                name="text"
+                id="text"
+                value={text}
+                onChange={(e) => setText(e.target.value)}
                 rows={3}
                 className="flex-1 text-sm text-gray-800 focus:outline-none resize-none min-h-[24px] max-h-60 py-1 overflow-y-auto overflow-x-hidden w-full field-sizing-content"
                 placeholder="Add a comment..."
@@ -225,7 +228,13 @@ function CommentList({
                 Post
               </button>
             </form>
-            {isOpen && <EmojiPicker isOpen={isOpen} setIsOpen={setIsOpen} />}
+            {isOpen && (
+              <EmojiPicker
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+                setText={setText}
+              />
+            )}
           </div>
         </div>
       </div>
