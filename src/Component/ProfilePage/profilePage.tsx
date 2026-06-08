@@ -1,11 +1,12 @@
 import { useContext, useState, type ReactNode } from "react";
 import { differenceInYears } from "date-fns";
 import { AppContext } from "../../Context/GlobalState";
-import Modal from "../Authorization/Modal";
+import Modal from "../Elements/Modal";
 import CreationPost from "./creationPost";
 import type { UserProfile } from "../../Types/Interafaces";
 import FollowList from "../ActionUser/FollowList";
 import Avatar from "../ActionUser/Avatar";
+import image_default from "../../assets/image_default.svg.png";
 
 function ProfilePage({
   children,
@@ -58,6 +59,9 @@ function ProfilePage({
     }
   };
 
+  const modalSize =
+    actionUser === "avatar" ? "sm" : actionUser === "post" ? "md" : "md";
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
       <div className="flex flex-col gap-8">
@@ -78,7 +82,7 @@ function ProfilePage({
             <div className="h-20 w-20 overflow-hidden rounded-full border-2 border-gray-200 sm:h-32 sm:w-32 bg-gray-800">
               <a onClick={() => setActionUser("avatar")}>
                 <img
-                  src={profileUser?.avatar || "/default-avatar.png"}
+                  src={profileUser?.avatar || image_default}
                   alt={`${profileUser?.first_name || "User"}'s profile picture`}
                   className="h-full w-full object-cover cursor-pointer hover:brightness-90 transition"
                   loading="eager"
@@ -176,7 +180,7 @@ function ProfilePage({
       </div>
 
       {actionUser && (
-        <Modal onClose={() => setActionUser(null)}>
+        <Modal onClose={() => setActionUser(null)} size={modalSize}>
           <button
             className="absolute top-0 right-0 m-4 text-gray-500 hover:text-gray-700"
             onClick={() => setActionUser(null)}

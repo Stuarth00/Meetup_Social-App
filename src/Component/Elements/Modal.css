@@ -13,16 +13,20 @@
 
 dialog {
     position: relative;
-    inset: 0;          
+    inset: 0;           
     margin: auto;       
     transform-origin: center center; 
     border: none; 
     border-radius: 12px;
-    background-color: var(--bg-color, #393b47);
+    background-color: var(--bg-color, #4B5563);
     color: var(--text-color, #9ea7a9);
     min-width: 300px;
     width: 90%;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+body.dialog-open {
+  overflow: initial;
 }
 
 dialog[open] {

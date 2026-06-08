@@ -54,7 +54,7 @@ function Login() {
           value={formData.email}
           onChange={hanldeChange}
           required
-          className="bg-lime-950 p-2 rounded-md"
+          className="bg-[#242424] p-2 rounded-md"
         />
 
         <label htmlFor="password">Password</label>
@@ -65,7 +65,7 @@ function Login() {
           value={formData.password}
           onChange={hanldeChange}
           required
-          className="bg-lime-950 p-2 rounded-md"
+          className="bg-[#242424] p-2 rounded-md"
         />
 
         <button>Log in</button>

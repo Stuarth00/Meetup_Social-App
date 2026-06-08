@@ -58,4 +58,13 @@ export interface Media {
 export interface Like {
   user_id: string;
   first_name: string;
+  last_name: string;
+}
+
+//For list of likes
+export interface LikeUser {
+  user_id: string;
+  first_name: string;
+  last_name: string;
+  avatar?: string;
 }

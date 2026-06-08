@@ -1,26 +1,16 @@
 import { Forward, Heart, MessageCircle } from "lucide-react";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { AppContext } from "../../Context/GlobalState";
-import Modal from "../Authorization/Modal";
+import Modal from "../Elements/Modal";
 import LikeList from "../ActionUser/LikeList";
-import CommentList from "../ActionUser/CommentList";
+import PostDetail from "./PostDetail";
 import SharePost from "../ActionUser/SharePost";
 import type { Like, Media, PostComment } from "../../Types/Interafaces";
-
-interface LikeUser {
-  user_id: string;
-  first_name: string;
-  last_name: string;
-  avatar?: string;
-}
+import { usePostActions } from "../hooks/usePostAction";
 
 function PostAction({
-  likes,
-  post_id,
   post,
 }: {
-  likes: { user_id: string }[] | undefined;
-  post_id: string;
   post: {
     post_id?: string;
     author_id?: string;
@@ -34,99 +24,37 @@ function PostAction({
     created_at?: string;
   };
 }) {
-  const [likesCount, setLikesCount] = useState(likes?.length || 0);
+  const { state, dispatch } = useContext(AppContext);
 
-  const { toggleLike, state, getLikesByPostId, dispatch } =
-    useContext(AppContext);
+  const currentPost =
+    state.posts.find((p) => p.post_id === post.post_id) || post;
+  const comments = currentPost?.comments || [];
 
-  const currentUserId = state.currentUser?.user_id;
-  const [isLiked, setIsLiked] = useState(
-    likes?.some((like) => like.user_id === currentUserId) || false,
-  );
+  const {
+    isLiked,
+    likesCount,
+    likesList,
+    handleLike,
+    handleSharePost,
+    fetchLikesList,
+  } = usePostActions(currentPost.post_id!, currentPost.likes || []);
+
   const [actionClicked, setActionClicked] = useState<
     "like" | "comment" | "share" | null
   >(null);
 
-  const [likesList, setLikesList] = useState<LikeUser[]>([]);
-
-  const currentPost = state.posts.find((p) => p.post_id === post_id);
-  const comments = currentPost?.comments || [];
-
-  useEffect(() => {
-    if (!currentUserId) return;
-
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsLiked(likes?.some((like) => like.user_id === currentUserId) || false);
-  }, [likes, currentUserId]);
-
-  //Hanlde like button click with optimistic UI update
-  const handleClick = async () => {
-    const previousIsLiked = isLiked;
-    const previousLikeCount = likesCount;
-
-    setIsLiked(!previousIsLiked);
-    setLikesCount((prev) => (previousIsLiked ? prev - 1 : prev + 1));
-
-    try {
-      const result = await toggleLike(post_id);
-
-      setIsLiked(result.is_liked);
-      setLikesCount(result.likesCount);
-    } catch (err) {
-      console.error("Backend failed, rolling back UI", err);
-      setIsLiked(previousIsLiked);
-      setLikesCount(previousLikeCount);
-    }
-  };
-
-  const fetchLikesList = async () => {
-    try {
-      const data: LikeUser[] = await getLikesByPostId(post_id.toString());
-      setLikesList(data);
-    } catch (err) {
-      console.error("Failed to fetch likes list", err);
-    }
-  };
-
-  const handleSharePost = async () => {
-    const shareUrl = `${window.location.origin}/posts/${post_id}`;
-    const shareData = {
-      title: "Check out this post!",
-      text: "I found this post interesting and wanted to share it with you.",
-      url: shareUrl,
-    };
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-        console.log("Post shared successfully");
-      } catch (err) {
-        console.error("Error sharing post:", err);
-        return err;
-      }
-    } else {
-      navigator.clipboard
-        .writeText(shareUrl)
-        .then(() => {
-          alert("Post URL copied to clipboard!");
-        })
-        .catch((err) => {
-          console.error("Failed to copy URL:", err);
-        });
-    }
-  };
-
   const modalAction = () => {
     switch (actionClicked) {
       case "like":
-        return <LikeList data={likesList} />;
+        return <LikeList likesList={likesList} />;
 
       case "comment":
         return (
-          <CommentList
+          <PostDetail
             post={post}
             isLiked={isLiked}
             likesCount={likesCount}
-            handleClick={handleClick}
+            handleLike={handleLike}
             handleSharePost={handleSharePost}
             dispatch={dispatch}
             comments={comments}
@@ -139,96 +67,96 @@ function PostAction({
   };
 
   return (
-    <div>
-      <div className="max-w-md p-4 border border-gray-100 rounded-xl shadow-sm bg-white">
-        <div className="flex items-center gap-6 pt-2 border-t border-gray-50">
-          <div
-            className="flex items-center gap-1.5 group cursor-pointer"
-            onClick={async () => {
-              await fetchLikesList();
-              setActionClicked("like");
+    <div className="p-4">
+      <div className="flex items-center gap-6 pt-2 border-t border-gray-50">
+        <div
+          className="flex items-center gap-1.5 group cursor-pointer"
+          onClick={async () => {
+            await fetchLikesList();
+            setActionClicked("like");
+          }}
+        >
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleLike();
             }}
+            className="p-1.5 rounded-full hover:bg-red-50 transition-colors duration-200"
+            aria-label="Like post"
           >
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleClick();
-              }}
-              className="p-1.5 rounded-full hover:bg-red-50 transition-colors duration-200"
-              aria-label="Like post"
-            >
-              <Heart
-                className={`w-5 h-5 transition-transform group-hover:scale-110 ${isLiked ? "fill-red-500 stroke-red-500" : "text-gray-600"}`}
-              />
-            </button>
-            <span className="text-xs font-semibold text-gray-600 group-hover:text-gray-900">
-              {likesCount}
-            </span>
-          </div>
+            <Heart
+              className={`w-5 h-5 transition-transform group-hover:scale-110 ${isLiked ? "fill-red-500 stroke-red-500" : "text-gray-600"}`}
+            />
+          </button>
+          <span className="text-xs font-semibold text-gray-600 group-hover:text-gray-900">
+            {likesCount}
+          </span>
+        </div>
 
-          <div
-            className="flex items-center gap-1.5 group cursor-pointer"
-            onClick={() => setActionClicked("comment")}
+        <div
+          className="flex items-center gap-1.5 group cursor-pointer"
+          onClick={() => setActionClicked("comment")}
+        >
+          <button
+            type="button"
+            className="p-1.5 rounded-full hover:bg-blue-50 transition-colors duration-200"
+            aria-label="View comments"
           >
-            <button
-              className="p-1.5 rounded-full hover:bg-blue-50 transition-colors duration-200"
-              aria-label="View comments"
-            >
-              <MessageCircle className="w-5 h-5 text-gray-600 transition-transform group-hover:scale-110" />
-            </button>
-            <span className="text-xs font-semibold text-gray-600 group-hover:text-gray-900">
-              {comments ? comments.length : 0}
-            </span>
-          </div>
+            <MessageCircle className="w-5 h-5 text-gray-600 transition-transform group-hover:scale-110" />
+          </button>
+          <span className="text-xs font-semibold text-gray-600 group-hover:text-gray-900">
+            {comments ? comments.length : 0}
+          </span>
+        </div>
 
-          <div
-            className="flex items-center gap-1.5 group cursor-pointer"
-            onClick={() => setActionClicked("share")}
+        <div
+          className="flex items-center gap-1.5 group cursor-pointer"
+          onClick={() => setActionClicked("share")}
+        >
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleSharePost();
+            }}
+            className="p-1.5 rounded-full hover:bg-green-50 transition-colors duration-200"
+            aria-label="Share post"
           >
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleSharePost();
-              }}
-              className="p-1.5 rounded-full hover:bg-green-50 transition-colors duration-200"
-              aria-label="Share post"
-            >
-              <Forward className="w-5 h-5 text-gray-600 transition-transform group-hover:scale-110" />
-            </button>
-            {/* <span className="text-xs font-semibold text-gray-600 group-hover:text-gray-900">
+            <Forward className="w-5 h-5 text-gray-600 transition-transform group-hover:scale-110" />
+          </button>
+          {/* <span className="text-xs font-semibold text-gray-600 group-hover:text-gray-900">
               5
             </span> */}
-          </div>
-        </div>
-
-        <div className="mb-3">
-          <p className="text-gray-800 text-sm leading-relaxed">
-            {post.description}
-          </p>
-        </div>
-
-        <div className="mt-3 pt-2 border-t border-gray-100">
-          <button
-            onClick={() => setActionClicked("comment")}
-            className="text-xs font-medium text-gray-400 hover:underline mb-1 block"
-          >
-            {comments && comments.length > 0
-              ? `View all ${comments.length} comments`
-              : "No comments yet. Be the first to comment!"}
-          </button>
-          {comments && comments[0] && (
-            <p className="text-xs text-gray-700">
-              <strong className="font-black mr-1">
-                {comments[0].username}
-              </strong>
-              {comments[0].text}
-            </p>
-          )}
         </div>
       </div>
 
+      <div className="mb-3">
+        <p className="text-gray-800 text-sm leading-relaxed">
+          {post.description}
+        </p>
+      </div>
+
+      <div className="mt-3 pt-2 border-t border-gray-100">
+        <button
+          type="button"
+          onClick={() => setActionClicked("comment")}
+          className="text-xs font-medium text-gray-400 hover:underline mb-1 block"
+        >
+          {comments && comments.length > 0
+            ? `View all ${comments.length} comments`
+            : "No comments yet. Be the first to comment!"}
+        </button>
+        {comments && comments[0] && (
+          <p className="text-xs text-gray-700">
+            <strong className="font-black mr-1">{comments[0].username}</strong>
+            {comments[0].text}
+          </p>
+        )}
+      </div>
+
       {actionClicked && (
-        <Modal onClose={() => setActionClicked(null)}>
+        <Modal size="lg" onClose={() => setActionClicked(null)}>
           <button
             className="absolute top-0 right-0 m-4 text-gray-500 hover:text-gray-700"
             onClick={() => setActionClicked(null)}

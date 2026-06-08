@@ -6,11 +6,11 @@ import { AppContext, type Action } from "../../Context/GlobalState";
 import { useContext, useState } from "react";
 import EmojiPicker from "../Elements/EmojiPicker";
 
-function CommentList({
+function PostDetail({
   likesCount,
   isLiked,
   post,
-  handleClick,
+  handleLike,
   handleSharePost,
   dispatch,
   comments,
@@ -29,7 +29,7 @@ function CommentList({
     comments?: PostComment[];
     created_at?: string;
   };
-  handleClick: () => void;
+  handleLike: () => void;
   handleSharePost: () => void;
   dispatch: React.Dispatch<Action>;
   comments: PostComment[];
@@ -43,14 +43,13 @@ function CommentList({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const text = formData.get("comment") as string;
+    const text = formData.get("text") as string;
     const form = e.currentTarget;
 
     if (!text.trim() || !post.post_id) return;
 
     try {
       const newComment: PostComment = await addComment(post.post_id, text);
-      console.log("New comment added:", newComment);
       dispatch({
         type: "ADD_COMMENT",
         payload: {
@@ -59,6 +58,7 @@ function CommentList({
         },
       });
       form.reset();
+      setText("");
     } catch (error) {
       console.error("Failed to add comment:", error);
     }
@@ -123,11 +123,11 @@ function CommentList({
             </div>
 
             <div className="space-y-4">
-              <div className="gap-3 group min-w-0">
+              <div className="gap-6 group min-w-0">
                 {comments.map((comment) => (
                   <div
                     key={comment.comment_id}
-                    className="flex items-start gap-3 min-w-0"
+                    className="flex items-center gap-5 min-w-0"
                   >
                     <img
                       src={comment.avatar}
@@ -146,8 +146,8 @@ function CommentList({
                         </strong>
                         {comment.text}
                       </p>
-                      <div className="flex items-center gap-3 mt-1 text-xs text-gray-400">
-                        <span>2h</span>
+                      <div className="flex items-center gap-2 mt-1 text-xs text-gray-400">
+                        {/* <span>2h</span> */}
                         <button className="font-semibold hover:text-gray-600">
                           Reply
                         </button>
@@ -162,13 +162,13 @@ function CommentList({
             </div>
           </div>
 
-          <div className="border-t border-gray-100 p-4 bg-white shrink-0">
-            <div className="flex items-center gap-5 mb-2">
+          <div className="border-gray-100 p-2 bg-white shrink-0">
+            <div className="flex items-center gap-6 mb-2">
               <button className="hover:scale-110 transition-transform">
                 <Heart
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleClick();
+                    handleLike();
                   }}
                   className={
                     isLiked ? "fill-red-500 text-red-500" : "text-gray-700"
@@ -188,27 +188,34 @@ function CommentList({
                 <Forward className="text-gray-700" />
               </button>
             </div>
-            <p className="text-sm font-semibold text-gray-900 mb-1">
-              {likesCount} likes
-            </p>
-            <p className="text-sm font-semibold text-gray-900 mb-1">
-              {post.comments && post.comments.length > 0
-                ? `${comments.length} comments`
-                : "No comments yet"}
-            </p>
-            <p className="text-[10px] text-gray-400 uppercase tracking-wide font-medium">
-              {formattedDate}
-            </p>
+
+            {/* Likes, comments count and date */}
+            <div className="flex items-center gap-3">
+              <p className="text-sm font-semibold text-gray-900 mb-1">
+                {likesCount} likes
+              </p>
+              <p className="text-sm font-semibold text-gray-900 mb-1">
+                {post.comments && post.comments.length > 0
+                  ? `${comments.length} comments`
+                  : "No comments yet"}
+              </p>
+              <p className="text-[10px] text-gray-400 uppercase tracking-wide font-medium">
+                {formattedDate}
+              </p>
+            </div>
           </div>
 
           {/* Form to comment */}
-          <div className="border-t border-gray-100 px-4 py-3 bg-white shrink-0">
-            <form onSubmit={handleSubmit} className="flex items-start gap-3">
+          <div className="relative border-t border-gray-100 px-4 py-3 bg-white shrink-0">
+            <form
+              onSubmit={handleSubmit}
+              className="flex flex-wrap items-start gap-3"
+            >
               {"  "}
               <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                className="text-gray-500 hover:text-gray-700 transition-colors hidden sm:block mt-1"
+                className="text-gray-500 hover:text-gray-700 transition-colors mt-1"
               >
                 <Smile className="w-6 h-6" />
               </button>
@@ -228,12 +235,11 @@ function CommentList({
                 Post
               </button>
             </form>
+
             {isOpen && (
-              <EmojiPicker
-                isOpen={isOpen}
-                setIsOpen={setIsOpen}
-                setText={setText}
-              />
+              <div className="absolute bottom-125 left-0 mb-2 z-50 mb-2 ">
+                <EmojiPicker setIsOpen={setIsOpen} setText={setText} />
+              </div>
             )}
           </div>
         </div>
@@ -242,4 +248,4 @@ function CommentList({
   );
 }
 
-export default CommentList;
+export default PostDetail;

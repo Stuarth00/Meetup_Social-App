@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import CommentList from "../Component/ActionUser/CommentList";
+import CommentList from "../Component/Post/PostDetail";
 import { getPostById } from "../Context/Requests";
 import { useEffect, useState } from "react";
 import type { Post } from "../Types/Interafaces";

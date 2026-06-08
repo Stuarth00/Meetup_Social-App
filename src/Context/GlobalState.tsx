@@ -99,6 +99,8 @@ export type Action =
   | { type: "LOGOUT" }
   | { type: "CREATE_POST"; payload: Post }
   | { type: "SET_POSTS"; payload: Post[] }
+  | { type: "UPDATE_POST"; payload: Post }
+  | { type: "SET_USERS"; payload: User[] }
   | { type: "UPDATE_PROFILE"; payload: UserProfile }
   | { type: "TOGGLE_FOLLOW"; payload: ToggleFollowPayload }
   | {
@@ -131,6 +133,19 @@ function appReducer(state: State, action: Action): State {
       return {
         ...state,
         posts: action.payload,
+      };
+    case "UPDATE_POST":
+      console.log(action.payload);
+      return {
+        ...state,
+        posts: state.posts.map((p) =>
+          p.post_id === action.payload.post_id ? action.payload : p,
+        ),
+      };
+    case "SET_USERS":
+      return {
+        ...state,
+        users: action.payload,
       };
     case "UPDATE_PROFILE":
       if (!state.currentUser) return state;
@@ -203,6 +218,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         dispatch({ type: "LOGOUT" });
         navigate("/auth");
         console.log(error);
+        return error;
       }
     };
     checkAuth();

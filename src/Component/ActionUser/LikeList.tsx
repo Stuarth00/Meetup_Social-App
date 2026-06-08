@@ -6,12 +6,12 @@ interface LikeUser {
   last_name: string;
   avatar?: string;
 }
-function LikeList({ data }: { data: LikeUser[] }) {
+function LikeList({ likesList }: { likesList: LikeUser[] }) {
   return (
     <div>
       <div className="modal-list-container">
         <p>List of users who liked, will be here</p>
-        {data.map((user) => (
+        {likesList.map((user) => (
           <div key={user.user_id} className="like-user-item">
             <img
               src={user.avatar}

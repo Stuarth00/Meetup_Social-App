@@ -1,7 +1,9 @@
 import { useContext, useEffect, useState } from "react";
-import type { User } from "../../Types/Interafaces";
+import type { UserProfile } from "../../Types/Interafaces";
 import { AppContext } from "../../Context/GlobalState";
+import image_default from "../../assets/image_default.svg.png";
 import "../../index.css";
+import "../Elements/SearchAndFollow.css";
 
 interface FollowListProps {
   type: "followers" | "following";
@@ -12,7 +14,8 @@ interface FollowListProps {
 function FollowList({ type, user_id, onClose }: FollowListProps) {
   const { getFollowersList, getFollowingList, handleNavigateToUserId } =
     useContext(AppContext);
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<UserProfile[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const handleClick = (userId: string) => {
     handleNavigateToUserId(userId);
@@ -21,44 +24,75 @@ function FollowList({ type, user_id, onClose }: FollowListProps) {
 
   useEffect(() => {
     const fetchList = async () => {
-      if (type === "followers") {
-        const data = await getFollowersList(user_id, type);
-        setUsers(data);
-      }
-      if (type === "following") {
-        const data = await getFollowingList(user_id, type);
-        setUsers(data);
+      try {
+        setIsLoading(true);
+        if (type === "followers") {
+          const data = await getFollowersList(user_id, type);
+          setUsers(data);
+        } else if (type === "following") {
+          const data = await getFollowingList(user_id, type);
+          setUsers(data);
+        }
+      } catch (err) {
+        return err;
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchList();
   }, [user_id, type]);
 
   return (
-    <div>
-      <h2 className="text-xl font-bold mb-4">
-        {type === "followers" ? "Followers" : "Following"}
+    <div style={{ padding: "8px" }}>
+      {/* Dynamic Header Title based on Type */}
+      <h2
+        style={{
+          fontSize: "1.3rem",
+          fontWeight: "700",
+          marginBottom: "20px",
+          textTransform: "capitalize",
+        }}
+      >
+        {type}
       </h2>
 
       <div className="modal-list-container">
-        {users.length === 0 ? (
-          <div className="empty-state">
-            <p>No {type === "followers" ? "followers" : "following"} yet.</p>
+        {isLoading ? (
+          <div className="status-msg">Fetching list...</div>
+        ) : users.length === 0 ? (
+          <div className="status-msg">
+            <p style={{ fontWeight: "500" }}>No {type} yet.</p>
           </div>
         ) : (
-          users.map((user) => (
-            <span
-              key={user.user_id}
-              className="user-row"
-              onClick={() => handleClick(user.user_id)}
-              style={{
-                cursor: "pointer",
-                display: "block",
-                marginBottom: "5px",
-              }}
-            >
-              {user.first_name} {user.last_name}
-            </span>
-          ))
+          <div className="user-list-grid">
+            {users.map((user) => (
+              <div
+                key={user.user_id}
+                className="user-card"
+                onClick={() => handleClick(user.user_id)}
+              >
+                {/* Visual Avatar Initials */}
+                <img
+                  src={user.avatar || image_default}
+                  alt={user.first_name}
+                  className="user-avatar"
+                />
+
+                {/* Main Identity Information */}
+                <div className="user-card-info">
+                  <span className="user-card-name">
+                    {user.first_name} {user.last_name}
+                  </span>
+                  <span className="user-card-handle">
+                    @{user.first_name.toLowerCase()}
+                  </span>
+                </div>
+
+                {/* Call To Action Button matching Search component */}
+                <button className="user-card-action-btn">View</button>
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </div>

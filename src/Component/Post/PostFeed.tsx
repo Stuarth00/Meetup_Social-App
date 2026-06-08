@@ -22,7 +22,6 @@ interface PostProps {
 function PostFeed({ post, handleNavigateToUserId }: PostProps) {
   const first_media_url =
     post.media && post.media.length > 0 ? post.media[0].content_url : null;
-  const post_id = post.post_id || "Unknown";
 
   return (
     <article className="w-full max-w-lg mx-auto bg-white border border-gray-100 rounded-xl shadow-sm bd-12 overflow-hidden mb-6">
@@ -37,7 +36,7 @@ function PostFeed({ post, handleNavigateToUserId }: PostProps) {
       <div className="border-b border-t bg-gray-50">
         <PostContent content_url={first_media_url!} />
       </div>
-      <PostActions likes={post.likes || []} post_id={post_id} post={post} />
+      <PostActions post={post} />
     </article>
   );
 }

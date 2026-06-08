@@ -7,14 +7,12 @@ import { AppContext } from "../Context/GlobalState";
 function HomeFeed() {
   const { getAllPosts, handleNavigateToUserId, dispatch, state } =
     useContext(AppContext);
-  // const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data: Post[] = await getAllPosts();
         dispatch({ type: "SET_POSTS", payload: data });
-        // setPosts(data);
       } catch (err) {
         console.error(err);
       }

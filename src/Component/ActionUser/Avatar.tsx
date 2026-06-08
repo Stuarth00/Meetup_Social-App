@@ -1,3 +1,5 @@
+import image_default from "../../assets/image_default.svg.png";
+
 interface AvatarProps {
   type: "avatar";
   avatar: string;
@@ -6,11 +8,11 @@ interface AvatarProps {
 
 function Avatar({ avatar }: AvatarProps) {
   return (
-    <div>
+    <div className="flex justify-center items-center p-4">
       <img
-        src={avatar || "/default-avatar.png"}
+        src={avatar || image_default}
         alt={`${"User"}'s profile picture`}
-        className="h-full w-full object-cover"
+        className="h-64 w-64 rounded-full object-cover"
         loading="eager"
       />
     </div>

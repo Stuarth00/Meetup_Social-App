@@ -117,7 +117,7 @@ export const getAllPosts = async () => {
 }
 
 export const getAllUsers = async () => {
-  const response = await fetch(`${API_URL}/users/get-all-users`, {
+  const response = await fetch(`${API_URL}/public/get-all-users`, {
     method: 'GET', 
     headers: {
       'Content-Type': 'application/json'

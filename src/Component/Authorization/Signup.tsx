@@ -78,7 +78,7 @@ function Signup() {
           value={formData.first_name}
           onChange={handleChange}
           required
-          className="bg-lime-950 p-2 rounded-md"
+          className="bg-[#242424] p-2 rounded-md"
         />
 
         <label htmlFor="lastname">Last name</label>
@@ -89,7 +89,7 @@ function Signup() {
           value={formData.last_name}
           onChange={handleChange}
           required
-          className="bg-lime-950 p-2 rounded-md"
+          className="bg-[#242424] p-2 rounded-md"
         />
 
         <label htmlFor="email">Email address</label>
@@ -100,7 +100,7 @@ function Signup() {
           value={formData.email}
           onChange={handleChange}
           required
-          className="bg-lime-950 p-2 rounded-md"
+          className="bg-[#242424] p-2 rounded-md"
         />
 
         <label htmlFor="password">Create your password</label>
@@ -111,7 +111,7 @@ function Signup() {
           value={formData.password}
           onChange={handleChange}
           required
-          className="bg-lime-950 p-2 rounded-md"
+          className="bg-[#242424] p-2 rounded-md"
         />
 
         <label htmlFor="birthday">Select your birth date</label>
@@ -122,7 +122,7 @@ function Signup() {
           value={formData.date_of_birth}
           onChange={handleChange}
           required
-          className="bg-lime-950 p-2 rounded-md"
+          className="bg-[#242424] p-2 rounded-md"
         />
         <button>Sign up</button>
       </form>
