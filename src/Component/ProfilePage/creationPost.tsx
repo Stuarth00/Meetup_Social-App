@@ -3,7 +3,8 @@ import { AppContext } from "../../Context/GlobalState";
 import heic2any from "heic2any";
 
 function CreationPost() {
-  const { dispatch, createPost } = useContext(AppContext);
+  const { dispatch, createPost, loading, setLoading, LoadingSpinner } =
+    useContext(AppContext);
 
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [description, setDescription] = useState("");
@@ -53,12 +54,7 @@ function CreationPost() {
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Submitting post with image URL:", imageUrl);
-
-    // const newPost: Post = {
-    //   content_url: [{ content_url: imageUrl }],
-    //   description: description,
-    // };
+    setLoading(true);
 
     try {
       if (!imageUrl) return;
@@ -68,9 +64,10 @@ function CreationPost() {
         payload: createdPost,
       });
     } catch (error) {
-      console.error("Failed to create post:", error);
       alert("Could not create post. Please try again.");
-      return;
+      return error;
+    } finally {
+      setLoading(false);
     }
     setImageUrl(null);
   };
@@ -83,8 +80,14 @@ function CreationPost() {
 
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col gap-4 bg-white dark:bg-gray-900 shadow-md rounded-xl p-4 sm:p-6"
+        className="relative flex flex-col gap-4 bg-white dark:bg-gray-900 shadow-md rounded-xl p-4 sm:p-6"
       >
+        {loading && (
+          <div className="absolute inset-0 bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm rounded-xl flex items-center justify-center z-10">
+            {LoadingSpinner()}
+          </div>
+        )}
+
         {/* Image Upload */}
         <label
           htmlFor="file-input"
@@ -97,9 +100,9 @@ function CreationPost() {
 
         <input
           id="file-input"
+          name="file-input"
           type="file"
           onChange={handleFileChange}
-          // required
           className="hidden"
           accept={acceptedFormats}
         />
@@ -127,7 +130,7 @@ function CreationPost() {
         {/* Submit */}
         <button
           type="submit"
-          className="w-full sm:w-auto self-end bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-500 text-white px-6 py-2 rounded-lg transition"
+          className="w-full sm:w-auto self-end bg-gray-700 text-white px-6 py-2 rounded-lg hover:bg-gray-500 transition"
         >
           Create Post
         </button>

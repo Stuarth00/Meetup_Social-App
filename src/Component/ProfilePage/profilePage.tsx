@@ -17,13 +17,8 @@ function ProfilePage({
   profileUser: UserProfile | null;
   isOwnProfile: boolean;
 }) {
-  const {
-    state,
-    dispatch,
-    LoadingSpinner,
-    handleEditProfileClick,
-    toggleFollowing,
-  } = useContext(AppContext);
+  const { state, dispatch, handleEditProfileClick, toggleFollowing } =
+    useContext(AppContext);
 
   const [actionUser, setActionUser] = useState<
     "post" | "followerList" | "followingList" | "avatar" | null
@@ -174,7 +169,6 @@ function ProfilePage({
             </div>
           </div>
         </header>
-        <LoadingSpinner />
 
         <main className="w-full">{children}</main>
       </div>

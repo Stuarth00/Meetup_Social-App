@@ -29,6 +29,7 @@ import {
   addComment,
   getPostById,
   deletePost,
+  deleteUser,
   type ToggleFollowResponse,
 } from "./Requests";
 
@@ -80,6 +81,7 @@ interface AppProviderType {
   addComment: (post_id: string, text: string) => Promise<PostComment>;
   getPostById: (post_id: string) => Promise<Post>;
   deletePost: (post_id: string) => Promise<void>;
+  deleteUser: () => Promise<void>;
 }
 
 const initialState: State = {
@@ -289,6 +291,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         addComment,
         getPostById,
         deletePost,
+        deleteUser,
       }}
     >
       {children}

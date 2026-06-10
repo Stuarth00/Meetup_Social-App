@@ -241,9 +241,22 @@ export const deletePost = async (post_id: string) => {
   const response = await fetch(`${API_URL}/posts/delete/${post_id}/post`, {
     method: 'DELETE', 
     headers: {
-      'Content-Type': 'applicatoin/json', 
+      'Content-Type': 'application/json', 
       'Authorization': `Bearer ${token}`
     }, 
   });
   return handleResponse(response);
 }
+
+//Deletion of users
+export const deleteUser = async () => {
+  const token = localStorage.getItem('token');
+  const response = await fetch(`${API_URL}/users/delete/me`, {
+    method: 'DELETE', 
+    headers: {
+      'Content-Type' : 'application/json', 
+      'Authorization': `Bearer ${token}`
+    },
+  });
+  return handleResponse(response);
+  }

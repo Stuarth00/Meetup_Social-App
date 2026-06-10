@@ -227,9 +227,10 @@ function PostDetail({
                     <div className="min-w-0 flex-1">
                       <p className="text-sm text-gray-800 break-words leading-relaxed">
                         <strong
-                          onClick={() =>
-                            handleNavigateToUserId(comment.user_id || "")
-                          }
+                          onClick={() => {
+                            handleNavigateToUserId(comment.user_id || "");
+                            onClose();
+                          }}
                           className="font-semibold mr-1.5 cursor-pointer hover:underline"
                         >
                           {comment.username}
