@@ -28,6 +28,7 @@ import {
   getLikesByPostId,
   addComment,
   getPostById,
+  deletePost,
   type ToggleFollowResponse,
 } from "./Requests";
 
@@ -43,7 +44,6 @@ interface AppProviderType {
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   LoadingSpinner: () => JSX.Element | null | undefined;
-  asyncSimulate: (callback: () => void, delay?: number) => void;
   registerUser: (userData: User) => Promise<Token>;
   loginUser: (email: string, password: string) => Promise<Token>;
   getCurrentAccount: () => Promise<User>;
@@ -79,6 +79,7 @@ interface AppProviderType {
   >;
   addComment: (post_id: string, text: string) => Promise<PostComment>;
   getPostById: (post_id: string) => Promise<Post>;
+  deletePost: (post_id: string) => Promise<void>;
 }
 
 const initialState: State = {
@@ -109,7 +110,8 @@ export type Action =
         post_id: string;
         comment: PostComment;
       };
-    };
+    }
+  | { type: "DELETE_POST"; payload: string };
 
 function appReducer(state: State, action: Action): State {
   switch (action.type) {
@@ -135,7 +137,6 @@ function appReducer(state: State, action: Action): State {
         posts: action.payload,
       };
     case "UPDATE_POST":
-      console.log(action.payload);
       return {
         ...state,
         posts: state.posts.map((p) =>
@@ -186,6 +187,11 @@ function appReducer(state: State, action: Action): State {
             : post,
         ),
       };
+    case "DELETE_POST":
+      return {
+        ...state,
+        posts: state.posts.filter((post) => post.post_id !== action.payload),
+      };
     default:
       return state;
   }
@@ -232,14 +238,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     return <ClipLoader color="#36d7b7" size={50} />;
   }
 
-  const asyncSimulate = (callback: () => void, delay = 5000) => {
-    setLoading(true);
-    setTimeout(() => {
-      callback();
-      setLoading(false);
-    }, delay);
-  };
-
   const handleHomeClick = () => {
     navigate("/");
   };
@@ -273,7 +271,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         LoadingSpinner,
         loading,
         setLoading,
-        asyncSimulate,
         registerUser,
         loginUser,
         getCurrentAccount,
@@ -291,6 +288,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         getLikesByPostId,
         addComment,
         getPostById,
+        deletePost,
       }}
     >
       {children}

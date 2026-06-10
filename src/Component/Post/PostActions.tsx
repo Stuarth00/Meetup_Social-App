@@ -58,6 +58,8 @@ function PostAction({
             handleSharePost={handleSharePost}
             dispatch={dispatch}
             comments={comments}
+            onClose={() => setActionClicked(null)}
+            isOwner={state.currentUser?.user_id === post.author_id}
           />
         );
 

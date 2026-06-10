@@ -9,7 +9,7 @@ function PostContent({ content_url }: { content_url: string }) {
           loading="lazy"
         />
       ) : (
-        <div className="w-full h-full bg-gray-200 animate-pulse" />
+        <div className="w-full h-full bg-gray-200 animate-pulse">Empty</div>
       )}
     </div>
   );

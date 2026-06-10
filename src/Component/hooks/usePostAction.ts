@@ -46,7 +46,6 @@ export function usePostActions (post_id: string, initialLikes : LikeUser[]){
             const udpatedPost = await toggleLike(pid);
             
             dispatch({ type: "UPDATE_POST", payload: udpatedPost});
-            console.log("updatedPost", udpatedPost);
         } catch(err) {
             setIsLiked(previousIsLiked);
             setLikesCount(previousLikeCount);

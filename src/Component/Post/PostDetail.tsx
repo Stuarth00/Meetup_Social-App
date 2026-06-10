@@ -1,5 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Heart, MessageCircle, Forward, Smile } from "lucide-react";
+import {
+  Heart,
+  MessageCircle,
+  Forward,
+  Smile,
+  EllipsisVertical,
+  OctagonAlert,
+} from "lucide-react";
 import "../../index.css";
 import type { Media, Like, PostComment } from "../../Types/Interafaces";
 import { AppContext, type Action } from "../../Context/GlobalState";
@@ -14,6 +21,8 @@ function PostDetail({
   handleSharePost,
   dispatch,
   comments,
+  onClose,
+  isOwner,
 }: {
   likesCount: number;
   isLiked: boolean;
@@ -33,12 +42,17 @@ function PostDetail({
   handleSharePost: () => void;
   dispatch: React.Dispatch<Action>;
   comments: PostComment[];
+  onClose: () => void;
+  isOwner: boolean;
 }) {
-  const { addComment, handleNavigateToUserId } = useContext(AppContext);
+  const { addComment, handleNavigateToUserId, deletePost } =
+    useContext(AppContext);
 
   const [text, setText] = useState<string>("");
   //Setting emojipicker
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [menuOpen, setMenuOpen] = useState<boolean>(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -72,6 +86,18 @@ function PostDetail({
     },
   );
 
+  const handleDelete = async () => {
+    if (!post.post_id) return;
+
+    await deletePost(post.post_id);
+    dispatch({
+      type: "DELETE_POST",
+      payload: post.post_id,
+    });
+
+    onClose();
+  };
+
   return (
     <div>
       <div className="w-full max-w-6xl h-[85vh] max-h-[750px] bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
@@ -102,6 +128,70 @@ function PostDetail({
                 </span>
                 <span className="text-xs text-gray-400">Original Poster</span>
               </div>
+
+              {isOwner ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setMenuOpen(!menuOpen)}
+                    className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                  >
+                    <EllipsisVertical className="w-5 h-5 text-gray-600" />
+                  </button>
+
+                  {menuOpen && (
+                    <div className="absolute right-0 top-12 w-44 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden z-50">
+                      <button className="w-full text-left px-4 py-3 text-sm hover:bg-gray-50 transition-colors">
+                        Edit
+                      </button>
+                      <button
+                        className="w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-red-50 transition-colors"
+                        onClick={() => setShowDeleteConfirm(true)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                  {showDeleteConfirm && (
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-50">
+                      <div className="bg-white rounded-2xl p-6 w-[340px] shadow-xl">
+                        <div className="flex justify-center mb-4">
+                          <div className="bg-red-100 p-3 rounded-full">
+                            <OctagonAlert className="text-red-500 w-6 h-6" />
+                          </div>
+                        </div>
+
+                        <h3 className="text-center font-semibold text-lg">
+                          Delete Post
+                        </h3>
+
+                        <p className="text-center text-sm text-gray-500 mt-2">
+                          This action cannot be undone. The post, comments and
+                          likes will be permanently removed.
+                        </p>
+
+                        <div className="flex gap-3 mt-6">
+                          <button
+                            onClick={() => {
+                              setShowDeleteConfirm(false);
+                              setMenuOpen(false);
+                            }}
+                            className="flex-1 py-2 border border-gray-200 rounded-lg hover:bg-gray-50"
+                          >
+                            Cancel
+                          </button>
+
+                          <button
+                            onClick={handleDelete}
+                            className="flex-1 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : null}
             </div>
           </div>
 

@@ -147,7 +147,7 @@ export const getPostsByUserId = async (user_id: string) => {
   if (!response.ok) {
     throw new Error("Failed to fetch user posts");
   }
-  return response.json();
+    return handleResponse(response); 
 }
 
 //Following system
@@ -231,6 +231,19 @@ export const getPostById = async (post_id: string) => {
     headers: {
       'Content-Type': 'application/json',
     },
+  });
+  return handleResponse(response);
+}
+
+//Deletion of post
+export const deletePost = async (post_id: string) => {
+  const token = localStorage.getItem('token');
+  const response = await fetch(`${API_URL}/posts/delete/${post_id}/post`, {
+    method: 'DELETE', 
+    headers: {
+      'Content-Type': 'applicatoin/json', 
+      'Authorization': `Bearer ${token}`
+    }, 
   });
   return handleResponse(response);
 }

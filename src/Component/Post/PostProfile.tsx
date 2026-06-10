@@ -117,6 +117,10 @@ function PostProfile({
             handleSharePost={handleSharePost}
             dispatch={dispatch}
             comments={comments}
+            onClose={() => setSelectedPost(null)}
+            isOwner={
+              state.currentUser?.user_id === currentSelectedPost.author_id
+            }
           />
         </Modal>
       )}
