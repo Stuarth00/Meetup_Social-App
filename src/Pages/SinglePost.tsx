@@ -1,13 +1,17 @@
 import { useParams } from "react-router-dom";
-import CommentList from "../Component/Post/PostDetail";
-import { getPostById } from "../Context/Requests";
-import { useEffect, useState } from "react";
+import PostDetail from "../Component/Post/PostDetail";
+import { useContext, useEffect, useState } from "react";
 import type { Post } from "../Types/Interafaces";
 import Layout from "../Component/Layout";
+import { usePostActions } from "../Component/hooks/usePostAction";
+import { AppContext } from "../Context/GlobalState";
 
 function SinglePost() {
   const { post_id } = useParams();
   const [post, setPost] = useState<Post | null>(null);
+  const { getPostById, state, dispatch } = useContext(AppContext);
+
+  const currentPost = state.posts.find((p) => p.post_id === post_id) || post;
 
   useEffect(() => {
     if (!post_id) return;
@@ -19,17 +23,31 @@ function SinglePost() {
       });
   }, [post_id]);
 
+  if (!currentPost) {
+    return <div>Loading...</div>;
+  }
   if (!post) return <div>Loading...</div>;
+
+  const comments = currentPost.comments || [];
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const { isLiked, likesCount, handleLike, handleSharePost } = usePostActions(
+    currentPost.post_id!,
+    currentPost.likes || [],
+  );
 
   return (
     <Layout>
-      <CommentList
-        post={post}
-        likesCount={post.likes?.length || 0}
-        isLiked={
-          post.likes?.some((like) => like.user_id === post.author_id) || false
-        }
-      ></CommentList>
+      <PostDetail
+        likesCount={likesCount}
+        isLiked={isLiked}
+        post={currentPost}
+        handleLike={handleLike}
+        handleSharePost={handleSharePost}
+        dispatch={dispatch}
+        comments={comments}
+        onClose={() => null}
+        isOwner={state.currentUser?.user_id === currentPost.author_id}
+      />
     </Layout>
   );
 }
