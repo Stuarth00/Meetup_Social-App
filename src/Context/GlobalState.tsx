@@ -212,7 +212,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       const token = localStorage.getItem("token");
       if (!token) {
         dispatch({ type: "LOGOUT" });
-        navigate("/auth");
+        // navigate("/auth");
         return;
       }
       try {
@@ -224,7 +224,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       } catch (error) {
         localStorage.removeItem("token");
         dispatch({ type: "LOGOUT" });
-        navigate("/auth");
+        // navigate("/auth");
         console.log(error);
         return error;
       }
