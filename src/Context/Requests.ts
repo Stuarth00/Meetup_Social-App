@@ -60,7 +60,7 @@ export const getCurrentAccount = async () => {
 }
 
 export const editAccount = async (updates : Partial<UserProfile>) => {
-    const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token');
   const response = await fetch(`${API_URL}/users/edit`, {
     method: 'PUT',
     headers: { 
@@ -95,6 +95,24 @@ export const createPost = async (
   );
   return handleResponse(response);
 };
+
+//Editing a post
+export const editPost = async (post_id: string, description: string, media: string[]) => {
+  const token = localStorage.getItem('token');
+  const response = await fetch(`${API_URL}/posts/${post_id}/edit-post`, {
+    method: "PUT", 
+    headers: {
+      "Content-Type": "application/json", 
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      post_id,
+      description, 
+      media,
+    }), 
+  });
+  return handleResponse(response);
+}
 
 //Getting posts by user logged in
 export const getPost = async () => {

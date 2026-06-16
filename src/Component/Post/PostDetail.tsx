@@ -11,7 +11,9 @@ import "../../index.css";
 import type { Media, Like, PostComment } from "../../Types/Interafaces";
 import { AppContext, type Action } from "../../Context/GlobalState";
 import { useContext, useState } from "react";
+import Modal from "../Elements/Modal";
 import EmojiPicker from "../Elements/EmojiPicker";
+import CreationPost from "../ProfilePage/creationPost";
 
 function PostDetail({
   likesCount,
@@ -47,12 +49,14 @@ function PostDetail({
 }) {
   const { addComment, handleNavigateToUserId, deletePost } =
     useContext(AppContext);
-
+  //For comment
   const [text, setText] = useState<string>("");
-  //Setting emojipicker
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
+
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -85,6 +89,11 @@ function PostDetail({
       day: "numeric",
     },
   );
+
+  const handleEditPost = () => {
+    setIsEditing(true);
+    setMenuOpen(false);
+  };
 
   const handleDelete = async () => {
     if (!post.post_id) return;
@@ -140,7 +149,10 @@ function PostDetail({
 
                   {menuOpen && (
                     <div className="absolute right-0 top-12 w-44 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden z-50">
-                      <button className="w-full text-left px-4 py-3 text-sm hover:bg-gray-50 transition-colors">
+                      <button
+                        onClick={handleEditPost}
+                        className="w-full text-left px-4 py-3 text-sm hover:bg-gray-50 transition-colors"
+                      >
                         Edit
                       </button>
                       <button
@@ -151,6 +163,16 @@ function PostDetail({
                       </button>
                     </div>
                   )}
+                  {/* For editing a Post */}
+                  {isEditing && (
+                    <Modal size="lg" onClose={() => setIsEditing(false)}>
+                      <CreationPost
+                        post={post}
+                        onClose={() => setIsEditing(false)}
+                      />
+                    </Modal>
+                  )}
+
                   {showDeleteConfirm && (
                     <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-50">
                       <div className="bg-white rounded-2xl p-6 w-[340px] shadow-xl">

@@ -1,13 +1,23 @@
 import { useState, useContext, type ChangeEvent } from "react";
 import { AppContext } from "../../Context/GlobalState";
 import heic2any from "heic2any";
+import type { Post } from "../../Types/Interafaces";
 
-function CreationPost() {
-  const { dispatch, createPost, loading, setLoading, LoadingSpinner } =
-    useContext(AppContext);
+function CreationPost({ post, onClose }: { post: Post; onClose: () => void }) {
+  const {
+    dispatch,
+    createPost,
+    editPost,
+    loading,
+    setLoading,
+    LoadingSpinner,
+  } = useContext(AppContext);
 
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [description, setDescription] = useState("");
+  const isEditing = !!post;
+  const [imageUrl, setImageUrl] = useState(post?.media?.[0]?.content_url || "");
+  const [description, setDescription] = useState(post?.description || "");
+  const media = imageUrl ? [imageUrl] : [];
+
   const [, setFile] = useState<File | null>(null);
   const acceptedFormats = "image/*, .webp, .avif, .jpeg, .jpg, .png";
 
@@ -57,19 +67,35 @@ function CreationPost() {
     setLoading(true);
 
     try {
-      if (!imageUrl) return;
-      const createdPost = await createPost(description, imageUrl);
-      dispatch({
-        type: "CREATE_POST",
-        payload: createdPost,
-      });
+      if (isEditing) {
+        const postId = post?.post_id;
+        if (!postId) {
+          alert("Something went wrong.");
+          setLoading(false);
+          return;
+        }
+
+        const updatedPost = await editPost(postId, description, media);
+        dispatch({
+          type: "UPDATE_POST",
+          payload: updatedPost,
+        });
+      } else {
+        const createdPost = await createPost(description, imageUrl);
+        dispatch({
+          type: "CREATE_POST",
+          payload: createdPost,
+        });
+      }
     } catch (error) {
       alert("Could not create post. Please try again.");
+      console.error("Edit Post Error:", error);
       return error;
     } finally {
       setLoading(false);
+      onClose();
     }
-    setImageUrl(null);
+    setImageUrl("");
   };
 
   return (
@@ -132,7 +158,7 @@ function CreationPost() {
           type="submit"
           className="w-full sm:w-auto self-end bg-gray-700 text-white px-6 py-2 rounded-lg hover:bg-gray-500 transition"
         >
-          Create Post
+          {isEditing ? "Update your post" : "Create a post"}
         </button>
       </form>
     </div>

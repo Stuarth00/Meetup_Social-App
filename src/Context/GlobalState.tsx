@@ -17,6 +17,7 @@ import {
   getCurrentAccount,
   editAccount,
   createPost,
+  editPost,
   getPost,
   getAllPosts,
   getUserById,
@@ -50,6 +51,11 @@ interface AppProviderType {
   getCurrentAccount: () => Promise<User>;
   editAccount: (updates: Partial<UserProfile>) => Promise<UserProfile>;
   createPost: (description: string, image_base64: string) => Promise<Post>;
+  editPost: (
+    post_id: string,
+    description: string,
+    media: string[],
+  ) => Promise<Post>;
   getPost: () => Promise<Post[]>;
   getAllPosts: () => Promise<Post[]>;
   getAllUsers: () => Promise<User[]>;
@@ -139,6 +145,7 @@ function appReducer(state: State, action: Action): State {
         posts: action.payload,
       };
     case "UPDATE_POST":
+      console.log(action.payload);
       return {
         ...state,
         posts: state.posts.map((p) =>
@@ -212,7 +219,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       const token = localStorage.getItem("token");
       if (!token) {
         dispatch({ type: "LOGOUT" });
-        // navigate("/auth");
         return;
       }
       try {
@@ -224,8 +230,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       } catch (error) {
         localStorage.removeItem("token");
         dispatch({ type: "LOGOUT" });
-        // navigate("/auth");
-        console.log(error);
         return error;
       }
     };
@@ -278,6 +282,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         getCurrentAccount,
         editAccount,
         createPost,
+        editPost,
         getPost,
         getAllPosts,
         getAllUsers,
