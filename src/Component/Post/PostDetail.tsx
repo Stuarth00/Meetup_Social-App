@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
+  EllipsisVertical,
+  OctagonAlert,
   Heart,
   MessageCircle,
   Forward,
   Smile,
-  EllipsisVertical,
-  OctagonAlert,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import "../../index.css";
 import type { Media, Like, PostComment } from "../../Types/Interafaces";
@@ -58,6 +60,8 @@ function PostDetail({
 
   const [isEditing, setIsEditing] = useState(false);
 
+  const [activeSlide, setActiveSlide] = useState<number>(0);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -107,19 +111,88 @@ function PostDetail({
     onClose();
   };
 
+  const nextSlide = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!post.media) return;
+    setActiveSlide((prev) => (prev === post.media!.length - 1 ? 0 : prev + 1));
+  };
+
+  const prevSlide = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!post.media) return;
+    setActiveSlide((prev) => (prev === 0 ? post.media!.length - 1 : prev - 1));
+  };
+
+  // Helper utility to detect video types safely
+  const isVideo = (url: string = "") => {
+    return (
+      url.startsWith("data:video/") ||
+      url.endsWith(".mp4") ||
+      url.endsWith(".mov") ||
+      url.includes("video")
+    );
+  };
+
+  const currentMediaUrl =
+    post.media && post.media.length > 0
+      ? post.media[activeSlide]?.content_url
+      : "";
+
   return (
     <div>
       <div className="w-full max-w-6xl h-[85vh] max-h-[750px] bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
-        <div className="w-full md:w-[50%] h-1/2 md:h-full bg-black flex items-center justify-center relative select-none border-b md:border-b-0 md:border-r border-gray-100">
-          <img
-            src={
-              post.media && post.media.length > 0
-                ? post.media[0].content_url
-                : ""
-            }
-            alt="Post content"
-            className="w-full h-full object-contain"
-          />
+        <div className="group w-full md:w-[50%] h-1/2 md:h-full bg-black flex items-center justify-center relative select-none border-b md:border-b-0 md:border-r border-gray-100">
+          {currentMediaUrl ? (
+            <div className="w-full h-full flex items-center justify-center">
+              {isVideo(currentMediaUrl) ? (
+                <video
+                  src={currentMediaUrl}
+                  controls
+                  className="w-full h-full object-contain"
+                />
+              ) : (
+                <img
+                  src={currentMediaUrl}
+                  alt="Post content"
+                  className="w-full h-full object-contain"
+                />
+              )}
+            </div>
+          ) : (
+            <div className="text-gray-500 text-xs">No Media Content</div>
+          )}
+
+          {/* Navigational Arrows (Only shows if array length > 1) */}
+          {post.media && post.media.length > 1 ? (
+            <>
+              <button
+                type="button"
+                onClick={prevSlide}
+                className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/90 dark:bg-gray-900/90 hover:bg-slate-700 rounded-full text-gray-800 dark:text-white shadow-md transition-opacity opacity-0 group-hover:opacity-100 z-20"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={nextSlide}
+                className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/90 dark:bg-gray-900/90 hover:bg-slate-700 rounded-full text-gray-800 dark:text-white shadow-md transition-opacity opacity-0 group-hover:opacity-100 z-20"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+
+              {/* Pagination Dots Indicator */}
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-20 bg-black/30 px-2.5 py-1 rounded-full backdrop-blur-xs">
+                {post.media.map((_, idx) => (
+                  <span
+                    key={idx}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      idx === activeSlide ? "w-3 bg-white" : "w-1.5 bg-white/50"
+                    }`}
+                  />
+                ))}
+              </div>
+            </>
+          ) : null}
         </div>
 
         <div className="w-full md:w-[50%] h-1/2 md:h-full flex flex-col bg-white min-w-0">

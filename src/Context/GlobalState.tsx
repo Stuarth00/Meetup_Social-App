@@ -50,7 +50,7 @@ interface AppProviderType {
   loginUser: (email: string, password: string) => Promise<Token>;
   getCurrentAccount: () => Promise<User>;
   editAccount: (updates: Partial<UserProfile>) => Promise<UserProfile>;
-  createPost: (description: string, image_base64: string) => Promise<Post>;
+  createPost: (description: string, mediaUrls: string[]) => Promise<Post>;
   editPost: (
     post_id: string,
     description: string,

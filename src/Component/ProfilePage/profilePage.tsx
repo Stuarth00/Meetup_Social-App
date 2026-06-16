@@ -175,17 +175,15 @@ function ProfilePage({
 
       {actionUser && (
         <Modal onClose={() => setActionUser(null)} size={modalSize}>
-          <button
-            className="absolute top-0 right-0 m-4 text-gray-500 hover:text-gray-700"
-            onClick={() => setActionUser(null)}
-          >
-            {" "}
-            X{" "}
-          </button>
           {(() => {
             switch (actionUser) {
               case "post":
-                return <CreationPost />;
+                return (
+                  <CreationPost
+                    post={undefined}
+                    onClose={() => setActionUser(null)}
+                  />
+                );
               case "followerList":
                 return (
                   <FollowList

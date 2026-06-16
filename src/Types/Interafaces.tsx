@@ -52,7 +52,7 @@ export interface PostComment {
 
 export interface Media {
   media_id?: string;
-  content_url?: string;
+  content_url: string;
 }
 
 export interface Like {

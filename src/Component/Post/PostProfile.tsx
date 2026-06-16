@@ -5,6 +5,7 @@ import type { Post } from "../../Types/Interafaces";
 import PostDetail from "./PostDetail";
 import Modal from "../Elements/Modal";
 import { usePostActions } from "../hooks/usePostAction";
+import { Images } from "lucide-react";
 
 function PostProfile({
   user_id,
@@ -86,14 +87,18 @@ function PostProfile({
                 className="border border-gray-300 rounded overflow-hidden shadow-lg break-inside-avoid cursor-pointer"
                 onClick={() => setSelectedPost(photo)}
               >
-                {photo.media?.map((media, index) => (
-                  <img
-                    key={media.media_id || index}
-                    src={media.content_url}
-                    alt={photo.description}
-                    className="w-full h-auto rounded-t hoverImg"
-                  />
-                ))}
+                <div className="relative">
+                  {photo.media && photo.media.length > 1 && (
+                    <Images className="absolute top-2 right-2 text-white w-4 h-4" />
+                  )}
+                  {photo.media?.[0] && (
+                    <img
+                      src={photo.media[0].content_url}
+                      alt={photo.description}
+                      className="w-full h-auto rounded-t hoverImg"
+                    />
+                  )}
+                </div>
               </div>
             ))}
           </div>

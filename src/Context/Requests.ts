@@ -76,7 +76,7 @@ export const editAccount = async (updates : Partial<UserProfile>) => {
 //Creating Posts
 export const createPost = async (
   description: string,
-  image_base64: string
+  media: string[]
 ) => {
   const token = localStorage.getItem("token");
   const response = await fetch(
@@ -89,7 +89,7 @@ export const createPost = async (
       },
       body: JSON.stringify({
         description,
-        image_base64,
+        media,
       }),
     }
   );
