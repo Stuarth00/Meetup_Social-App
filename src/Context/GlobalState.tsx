@@ -103,8 +103,6 @@ type ToggleFollowPayload = {
 
 export type Action =
   | { type: "SET_CURRENT_USER"; payload: User }
-  | { type: "REGISTER_USER"; payload: User }
-  | { type: "LOGIN_USER"; payload: User }
   | { type: "LOGOUT" }
   | { type: "CREATE_POST"; payload: Post }
   | { type: "SET_POSTS"; payload: Post[] }

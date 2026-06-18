@@ -13,6 +13,8 @@ export function usePostActions (post_id: string, initialLikes : LikeUser[]){
     const [likesCount, setLikesCount]= useState(initialLikes?.length || 0);
     const [likesList, setLikesList] = useState(initialLikes || []);
 
+    const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
+
 
     useEffect(() => {
         if(!currentUserId) return;
@@ -33,6 +35,11 @@ export function usePostActions (post_id: string, initialLikes : LikeUser[]){
     }, [initialLikes]);
 
     const handleLike = async () => {
+        if(!state.currentUser) { 
+            setShowAuthModal(true);
+            return;
+        }
+
         if(!post_id) return;
         const pid = String(post_id);
 
@@ -96,5 +103,7 @@ export function usePostActions (post_id: string, initialLikes : LikeUser[]){
         handleLike,
         handleSharePost,
         fetchLikesList,
+        showAuthModal, 
+        setShowAuthModal,
     };
 }

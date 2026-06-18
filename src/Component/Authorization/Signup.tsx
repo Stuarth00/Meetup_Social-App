@@ -2,6 +2,7 @@ import { useContext, useState, type ChangeEvent, type FormEvent } from "react";
 import { AppContext } from "../../Context/GlobalState";
 import { useNavigate } from "react-router-dom";
 import type { User } from "../../Types/Interafaces";
+import { X } from "lucide-react";
 
 interface SignupFormData {
   first_name: string;
@@ -19,7 +20,7 @@ const initial_form: SignupFormData = {
   password: "",
 };
 
-function Signup() {
+function Signup({ onClose }: { onClose: () => void }) {
   const [formData, setFormData] = useState<SignupFormData>(initial_form);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -57,6 +58,13 @@ function Signup() {
   };
   return (
     <div>
+      <button
+        type="button"
+        onClick={onClose}
+        className="p-1 rounded-full top-0 right-0 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition"
+      >
+        <X className="w-5 h-5" />
+      </button>
       <h1>Sign up</h1>
       <p>And start connecting!</p>
 

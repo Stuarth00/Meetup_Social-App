@@ -218,12 +218,12 @@ export const toggleLike = async (post_id: string) => {
 }
 
 export const getLikesByPostId = async (post_id: string) => {
-  const token = localStorage.getItem('token');
-  const response = await fetch(`${API_URL}/like/${post_id}/likes`, {
+  // const token = localStorage.getItem('token');
+  const response = await fetch(`${API_URL}/public/${post_id}/likes`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+      // 'Authorization': `Bearer ${token}`
     },
   });
   return handleResponse(response);

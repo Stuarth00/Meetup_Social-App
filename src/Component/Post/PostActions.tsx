@@ -7,6 +7,7 @@ import PostDetail from "./PostDetail";
 import SharePost from "../ActionUser/SharePost";
 import type { Like, Media, PostComment } from "../../Types/Interafaces";
 import { usePostActions } from "../hooks/usePostAction";
+import ModalAuthFlow from "../Elements/ModalAuthFlow";
 
 function PostAction({
   post,
@@ -37,6 +38,8 @@ function PostAction({
     handleLike,
     handleSharePost,
     fetchLikesList,
+    showAuthModal,
+    setShowAuthModal,
   } = usePostActions(currentPost.post_id!, currentPost.likes || []);
 
   const [actionClicked, setActionClicked] = useState<
@@ -71,6 +74,12 @@ function PostAction({
   return (
     <div className="p-4">
       <div className="flex items-center gap-6 pt-2 border-t border-gray-50">
+        {showAuthModal && (
+          <Modal size="md" onClose={() => setShowAuthModal(false)}>
+            <ModalAuthFlow onClose={() => setShowAuthModal(false)} />
+          </Modal>
+        )}
+
         <div
           className="flex items-center gap-1.5 group cursor-pointer"
           onClick={async () => {

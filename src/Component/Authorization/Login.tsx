@@ -1,6 +1,7 @@
 import { useState, useContext, type ChangeEvent, type FormEvent } from "react";
 import { AppContext } from "../../Context/GlobalState";
 import { useNavigate } from "react-router-dom";
+import { X } from "lucide-react";
 
 interface LoginFormData {
   email: string;
@@ -12,7 +13,7 @@ const initial_form: LoginFormData = {
   password: "",
 };
 
-function Login() {
+function Login({ onClose }: { onClose: () => void }) {
   const [formData, setFormData] = useState<LoginFormData>(initial_form);
   const { dispatch, LoadingSpinner, loginUser, getCurrentAccount } =
     useContext(AppContext);
@@ -39,7 +40,13 @@ function Login() {
     <div>
       <h1>Log in</h1>
       <p>And meet all the world!</p>
-
+      <button
+        type="button"
+        onClick={onClose}
+        className="p-1 rounded-full top-0 right-0 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition"
+      >
+        <X className="w-5 h-5" />
+      </button>
       <LoadingSpinner />
 
       <form

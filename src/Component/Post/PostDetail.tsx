@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   EllipsisVertical,
   OctagonAlert,
@@ -16,6 +15,7 @@ import { useContext, useState } from "react";
 import Modal from "../Elements/Modal";
 import EmojiPicker from "../Elements/EmojiPicker";
 import CreationPost from "../ProfilePage/creationPost";
+import ModalAuthFlow from "../Elements/ModalAuthFlow";
 
 function PostDetail({
   likesCount,
@@ -49,7 +49,7 @@ function PostDetail({
   onClose: () => void;
   isOwner: boolean;
 }) {
-  const { addComment, handleNavigateToUserId, deletePost } =
+  const { state, addComment, handleNavigateToUserId, deletePost } =
     useContext(AppContext);
   //For comment
   const [text, setText] = useState<string>("");
@@ -61,12 +61,18 @@ function PostDetail({
   const [isEditing, setIsEditing] = useState(false);
 
   const [activeSlide, setActiveSlide] = useState<number>(0);
+  const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const text = formData.get("text") as string;
     const form = e.currentTarget;
+
+    if (!state.currentUser) {
+      setShowAuthModal(true);
+      return;
+    }
 
     if (!text.trim() || !post.post_id) return;
 
@@ -141,6 +147,11 @@ function PostDetail({
   return (
     <div>
       <div className="w-full max-w-6xl h-[85vh] max-h-[750px] bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
+        {showAuthModal && (
+          <Modal size="md" onClose={() => setShowAuthModal(false)}>
+            <ModalAuthFlow onClose={() => setShowAuthModal(false)} />
+          </Modal>
+        )}
         <div className="group w-full md:w-[50%] h-1/2 md:h-full bg-black flex items-center justify-center relative select-none border-b md:border-b-0 md:border-r border-gray-100">
           {currentMediaUrl ? (
             <div className="w-full h-full flex items-center justify-center">

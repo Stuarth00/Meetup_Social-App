@@ -40,8 +40,12 @@ function Authorization() {
       </div>
 
       {authMode && (
-        <ModalForm onClose={() => setAuthMode(null)}>
-          {authMode === "login" ? <Login /> : <Signup />}
+        <ModalForm size="md" onClose={() => setAuthMode(null)}>
+          {authMode === "login" ? (
+            <Login onClose={() => setAuthMode(null)} />
+          ) : (
+            <Signup onClose={() => setAuthMode(null)} />
+          )}
         </ModalForm>
       )}
     </div>
