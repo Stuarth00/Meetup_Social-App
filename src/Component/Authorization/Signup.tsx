@@ -24,8 +24,14 @@ function Signup({ onClose }: { onClose: () => void }) {
   const [formData, setFormData] = useState<SignupFormData>(initial_form);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const { dispatch, LoadingSpinner, registerUser, getCurrentAccount } =
-    useContext(AppContext);
+  const {
+    dispatch,
+    loading,
+    setLoading,
+    LoadingSpinner,
+    registerUser,
+    getCurrentAccount,
+  } = useContext(AppContext);
   const navigate = useNavigate();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -38,6 +44,7 @@ function Signup({ onClose }: { onClose: () => void }) {
 
   const hanldeSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       await registerUser(formData as User);
@@ -54,6 +61,8 @@ function Signup({ onClose }: { onClose: () => void }) {
       if (error instanceof Error) {
         setErrorMessage(error.message);
       }
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -68,7 +77,6 @@ function Signup({ onClose }: { onClose: () => void }) {
       <h1>Sign up</h1>
       <p>And start connecting!</p>
 
-      <LoadingSpinner />
       {errorMessage && (
         <div className="bg-red-500 text-white p-3 rounded-md">
           {errorMessage}
@@ -78,6 +86,11 @@ function Signup({ onClose }: { onClose: () => void }) {
         className="flex flex-col gap-4 p-[48px] p-4 rounded-md"
         onSubmit={hanldeSubmit}
       >
+        {loading && (
+          <div className="absolute inset-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm flex items-center justify-center z-50">
+            {LoadingSpinner()}
+          </div>
+        )}
         <label htmlFor="firstname">First name</label>
         <input
           type="text"

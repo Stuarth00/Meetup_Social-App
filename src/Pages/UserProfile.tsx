@@ -9,7 +9,8 @@ import { AppContext } from "../Context/GlobalState";
 
 function ProfileUser() {
   const { user_id } = useParams<{ user_id: string }>();
-  const { state, getUserById } = useContext(AppContext);
+  const { state, authLoading, getUserById, LoadingSpinner } =
+    useContext(AppContext);
   const [profileUser, setProfileUser] = useState<UserProfile | null>(null);
 
   useEffect(() => {
@@ -23,7 +24,9 @@ function ProfileUser() {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setProfileUser(state.currentUser);
     }
-  }, [user_id]);
+  }, [user_id, state.currentUser]);
+
+  if (authLoading) return <LoadingSpinner />;
 
   if (!user_id && !state.currentUser) return <Authorization />;
 

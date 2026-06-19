@@ -15,8 +15,14 @@ const initial_form: LoginFormData = {
 
 function Login({ onClose }: { onClose: () => void }) {
   const [formData, setFormData] = useState<LoginFormData>(initial_form);
-  const { dispatch, LoadingSpinner, loginUser, getCurrentAccount } =
-    useContext(AppContext);
+  const {
+    dispatch,
+    loading,
+    setLoading,
+    LoadingSpinner,
+    loginUser,
+    getCurrentAccount,
+  } = useContext(AppContext);
   const navigate = useNavigate();
 
   const hanldeChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -29,13 +35,22 @@ function Login({ onClose }: { onClose: () => void }) {
 
   const hanldeSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
 
-    await loginUser(formData.email, formData.password);
-    const user = await getCurrentAccount();
-    dispatch({ type: "SET_CURRENT_USER", payload: user });
-    navigate("/user-profile");
-    setFormData(initial_form);
+    try {
+      await loginUser(formData.email, formData.password);
+      const user = await getCurrentAccount();
+      dispatch({ type: "SET_CURRENT_USER", payload: user });
+      navigate("/user-profile");
+      setFormData(initial_form);
+    } catch (error) {
+      console.log("Error: ", error);
+      return <p>Couldn't log in, please try again.</p>;
+    } finally {
+      setLoading(false);
+    }
   };
+
   return (
     <div>
       <h1>Log in</h1>
@@ -47,12 +62,17 @@ function Login({ onClose }: { onClose: () => void }) {
       >
         <X className="w-5 h-5" />
       </button>
-      <LoadingSpinner />
 
       <form
         className="flex flex-col gap-4 p-[48px] p-4 rounded-md"
         onSubmit={hanldeSubmit}
       >
+        {loading && (
+          <div className="absolute inset-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm flex items-center justify-center z-50">
+            {LoadingSpinner()}
+          </div>
+        )}
+
         <label htmlFor="email">Email</label>
         <input
           id="email"

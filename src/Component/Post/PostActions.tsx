@@ -136,9 +136,6 @@ function PostAction({
           >
             <Forward className="w-5 h-5 text-gray-600 transition-transform group-hover:scale-110" />
           </button>
-          {/* <span className="text-xs font-semibold text-gray-600 group-hover:text-gray-900">
-              5
-            </span> */}
         </div>
       </div>
 

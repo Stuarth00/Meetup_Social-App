@@ -43,6 +43,7 @@ interface AppProviderType {
   handleNavigateToUserId: (userId: string) => void;
   state: State;
   dispatch: React.Dispatch<Action>;
+  authLoading: boolean;
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   LoadingSpinner: () => JSX.Element | null | undefined;
@@ -143,7 +144,6 @@ function appReducer(state: State, action: Action): State {
         posts: action.payload,
       };
     case "UPDATE_POST":
-      console.log(action.payload);
       return {
         ...state,
         posts: state.posts.map((p) =>
@@ -208,27 +208,28 @@ export const AppContext = createContext<AppProviderType>({} as AppProviderType);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
-  //Routes
+
+  const [authLoading, setAuthLoading] = useState(true);
   const navigate = useNavigate();
 
-  //Check token validation
+  //check if logged in
   useEffect(() => {
     const checkAuth = async () => {
       const token = localStorage.getItem("token");
       if (!token) {
         dispatch({ type: "LOGOUT" });
+        setAuthLoading(false);
         return;
       }
       try {
         const user = await getCurrentAccount();
-        dispatch({
-          type: "SET_CURRENT_USER",
-          payload: user,
-        });
+        dispatch({ type: "SET_CURRENT_USER", payload: user });
       } catch (error) {
         localStorage.removeItem("token");
         dispatch({ type: "LOGOUT" });
-        return error;
+        console.log(error);
+      } finally {
+        setAuthLoading(false);
       }
     };
     checkAuth();
@@ -266,6 +267,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       value={{
         state,
         dispatch,
+        authLoading,
         handleHomeClick,
         handleUserProfileClick,
         handleSearchClick,
