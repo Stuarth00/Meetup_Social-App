@@ -8,15 +8,14 @@ A full-stack social media app where users can share posts, follow other users, l
 
 ## Screenshots / Demo
 
-> _(Drop your .mp4 videos here by dragging them into the GitHub README editor)_
 
 | Sign Up       | Create Post       |
 | ------------- | ----------------- |
-| _sign-up.mp4_ | _create-post.mp4_ |
+| <img width="600" height="300" alt="Singup" src="https://github.com/user-attachments/assets/0bdb0bbd-ff6d-42d0-b100-0b8713ef1d42" /> | <img width="600" height="300" alt="create-post" src="https://github.com/user-attachments/assets/67515ddd-4d18-49e2-943c-7ef92dfeaddd" /> |
 
 | Like & Comment     | Edit Profile      |
 | ------------------ | ----------------- |
-| _like-comment.mp4_ | _edit-avatar.mp4_ |
+| <img width="600" height="300" alt="Interact-post" src="https://github.com/user-attachments/assets/64c46544-2f40-461b-99c8-5402d5055e6c" /> | <img width="600" height="300" alt="profile-edit" src="https://github.com/user-attachments/assets/4d2ce3c6-61b0-4e87-8ad1-55414f781434" /> |
 
 ---
 
@@ -151,7 +150,17 @@ CLOUDINARY_API_SECRET=your_api_secret
 Run the database schema (create tables in this order):
 
 ```sql
--- users → posts → post_media → likes → comments → follows
+users
+├── posts (author_id → users.user_id)
+│   ├── post_media (post_id → posts.post_id)
+│   ├── likes (post_id → posts.post_id, user_id → users.user_id)
+│   └── comments (post_id → posts.post_id, user_id → users.user_id)
+└── follows (follower_id → users.user_id, following_id → users.user_id)
+```
+
+Run the database schema:
+```bash
+psql -U your_user -d meetup -f schema.sql
 ```
 
 ```bash
@@ -181,4 +190,4 @@ npm run dev
 
 **Cedric Salvador** — self-taught developer
 [GitHub](https://github.com/Stuarth00)
-[Linkedi](https://www.linkedin.com/in/cedric-salvador-9790371aa/?locale=en)
+[LinkedIn](https://www.linkedin.com/in/cedric-salvador-9790371aa/?locale=en)
