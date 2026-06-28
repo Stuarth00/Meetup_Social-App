@@ -181,3 +181,4 @@ npm run dev
 
 **Cedric Salvador** — self-taught developer
 [GitHub](https://github.com/Stuarth00)
+[Linkedi](https://www.linkedin.com/in/cedric-salvador-9790371aa/?locale=en)
